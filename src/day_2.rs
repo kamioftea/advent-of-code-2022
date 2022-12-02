@@ -13,16 +13,23 @@ enum Move {
 }
 
 type Round = (Move, Move);
+type Tournament = Vec<Round>;
 
 /// The entry point for running the solutions with the 'real' puzzle input.
 //
 /// - The puzzle input is expected to be at `<project_root>/res/day-2-input`
 /// - It is expected this will be called by [`super::main()`] when the user elects to run day 2.
 pub fn run() {
-    let _contents = fs::read_to_string("res/day-02-input").expect("Failed to read file");
+    let contents = fs::read_to_string("res/day-02-input").expect("Failed to read file");
+    let tournament = parse_guide(&contents);
+
+    println!(
+        "Following the guide, your score would be: {}",
+        score_tournament(&tournament)
+    )
 }
 
-fn parse_guide(guide: &String) -> Vec<Round> {
+fn parse_guide(guide: &String) -> Tournament {
     guide.lines()
         .map(parse_line)
         .collect()
@@ -62,9 +69,13 @@ fn score_move((_, your_move): &Round) -> u32 {
     }
 }
 
+fn score_tournament(tournament: &Tournament) -> u32 {
+    tournament.into_iter().map(score_round).sum()
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::day_2::{parse_guide, Round, score_round};
+    use crate::day_2::{parse_guide, score_round, score_tournament, Tournament};
     use crate::day_2::Move::{Paper, Rock, Scissors};
 
     #[test]
@@ -75,18 +86,30 @@ C Z".to_string();
 
         assert_eq!(
             parse_guide(&example_guide),
-            vec![
-                (Rock, Paper),
-                (Paper, Rock),
-                (Scissors, Scissors),
-            ]
+            sample_tournament()
         )
     }
 
+    fn sample_tournament() -> Tournament {
+        vec![
+            (Rock, Paper),
+            (Paper, Rock),
+            (Scissors, Scissors),
+        ]
+    }
+
     #[test]
-    fn can_score() {
+    fn can_score_round() {
         assert_eq!(score_round(&(Rock, Paper)), 8);
         assert_eq!(score_round(&(Paper, Rock)), 1);
         assert_eq!(score_round(&(Scissors, Scissors)), 6);
+    }
+
+    #[test]
+    fn can_score_tournament() {
+        assert_eq!(
+            score_tournament(&sample_tournament()),
+            15
+        )
     }
 }
