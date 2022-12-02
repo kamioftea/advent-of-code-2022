@@ -42,11 +42,29 @@ fn parse_move(chr: char) -> Option<Move> {
     }
 }
 
+fn score_round(round: &Round) -> u32 {
+    score_result(round) + score_move(round)
+}
 
+fn score_result(round: &Round) -> u32 {
+    match round {
+        (Rock, Paper) | (Paper, Scissors) | (Scissors, Rock) => 6,
+        (them, you) if them == you => 3,
+        (_, _) => 0
+    }
+}
+
+fn score_move((_, your_move): &Round) -> u32 {
+    match your_move {
+        Rock => 1,
+        Paper => 2,
+        Scissors => 3
+    }
+}
 
 #[cfg(test)]
 mod tests {
-    use crate::day_2::{parse_guide, Round};
+    use crate::day_2::{parse_guide, Round, score_round};
     use crate::day_2::Move::{Paper, Rock, Scissors};
 
     #[test]
@@ -65,7 +83,10 @@ C Z".to_string();
         )
     }
 
-    // fn can_score() {
-    //
-    // }
+    #[test]
+    fn can_score() {
+        assert_eq!(score_round(&(Rock, Paper)), 8);
+        assert_eq!(score_round(&(Paper, Rock)), 1);
+        assert_eq!(score_round(&(Scissors, Scissors)), 6);
+    }
 }
