@@ -51,34 +51,34 @@ fn parse_guide(guide: &String, syntax: fn(&str) -> Round ) -> Tournament {
 }
 
 fn parse_moves_line(line: &str) -> Round {
-    let chars: Vec<char> = line.chars().collect();
+    let (part_1, part_2) = line.split_at(1);
     (
-        parse_move(chars[0]).unwrap(),
-        parse_move(chars[2]).unwrap()
+        parse_move(part_1).unwrap(),
+        parse_move(part_2).unwrap()
     )
 }
 
 fn parse_outcome_line(line: &str) -> Round {
-    let chars: Vec<char> = line.chars().collect();
-    let their_move = parse_move(chars[0]).unwrap();
-    let outcome = parse_outcome(chars[2]).unwrap();
+    let (part_1, part_2) = line.split_at(1);
+    let their_move = parse_move(part_1).unwrap();
+    let outcome = parse_outcome(part_2).unwrap();
     parse_strategy(their_move, outcome)
 }
 
-fn parse_move(chr: char) -> Option<Move> {
+fn parse_move(chr: &str) -> Option<Move> {
     match chr {
-         'A' | 'X' => Some(Rock),
-         'B' | 'Y' => Some(Paper),
-         'C' | 'Z' => Some(Scissors),
+         "A" | " X" => Some(Rock),
+         "B" | " Y" => Some(Paper),
+         "C" | " Z" => Some(Scissors),
          _ => None
     }
 }
 
-fn parse_outcome(chr: char) -> Option<Outcome> {
+fn parse_outcome(chr: &str) -> Option<Outcome> {
     match chr {
-        'X' => Some(Loss),
-        'Y' => Some(Draw),
-        'Z' => Some(Win),
+        " X" => Some(Loss),
+        " Y" => Some(Draw),
+        " Z" => Some(Win),
         _ => None
     }
 }
