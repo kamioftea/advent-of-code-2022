@@ -29,7 +29,6 @@ jobs:
         run: |
           export RUSTDOCFLAGS="-Dwarnings"
           cargo doc
-      - uses: actions/checkout@v3
       - name: Test Blog
         run: |
           cd pubs
