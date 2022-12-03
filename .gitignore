@@ -1,4 +1,7 @@
 /target
 /.idea/
-/advent-of-code-2022.iml
+**/*.iml
 /res/
+/pubs/_site/
+/pubs/node_modules/
+

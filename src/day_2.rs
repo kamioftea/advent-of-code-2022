@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 2 - _Title_](https://adventofcode.com/2021/day/2)
+//! This is my solution for [Advent of Code - Day 2 - _Rock Paper Scissors_](https://adventofcode.com/2021/day/2)
 //!
 //!
 
@@ -28,7 +28,7 @@ type Tournament = Vec<Round>;
 /// - The puzzle input is expected to be at `<project_root>/res/day-2-input`
 /// - It is expected this will be called by [`super::main()`] when the user elects to run day 2.
 pub fn run() {
-    let contents = fs::read_to_string("res/day-02-input").expect("Failed to read file");
+    let contents = fs::read_to_string("res/day-2-input").expect("Failed to read file");
     let tournament = parse_strategy(&contents, parse_moves_line);
 
     println!(
