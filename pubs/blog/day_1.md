@@ -231,7 +231,7 @@ There are a couple of inefficient things I'm doing that are not necessary given 
    (aliased `Vec<u32>`s) is not needed and will be taking quite a bit of time to allocate.
 2. Sorting the full list of elves when we only need the top three.
 
-So I'll first create a new parsing function that just builds the totals per elf directly. I'm also starting to get back
+So I'll first create a new parsing function that builds the totals per elf directly. I'm also starting to get back
 into the Rust mindset more. Rather than folding I'll use a couple of mutable local variables for the expedition and the
 running total for the current elf. The compiler can detect race conditions and other perils of mutable state, 
 so it is safer to use it than other languages I'm used to.
@@ -340,5 +340,6 @@ pub fn run() {
 
 Which is twice again faster, for an overall 10x speed up.
 
-I've done a bit more tidying removing dead code. You can see the [resulting solution code for day 1 in the 
-documentation](../../src/advent_of_code_2022/day_1.rs.html#1-106).
+I've done a bit more tidying removing dead code, simplifying the naming e.g. `parse_input_to_calorie_totals` back to 
+just `parse_input` now there are no longer two versions to differentiate. You can see the [resulting solution code for 
+day 1 in the documentation]({{ '/src/advent_of_code_2022/day_1.rs.html#1-106' | url }}).

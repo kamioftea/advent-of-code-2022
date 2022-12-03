@@ -17,8 +17,8 @@ from both of these, and publish them to this site on GitHub Pages.
   <div class="solution">
     <p>{{solution.title}}</p>
     <p>
-      {%- for label, url in solution.links -%}
-        [<a href="{{ url }}">{{ label }}</a>]
+      {%- for label, href in solution.links -%}
+        [<a href="{{ href | url }}">{{ label }}</a>]
       {%- endfor -%}
     </p>
   </div>
