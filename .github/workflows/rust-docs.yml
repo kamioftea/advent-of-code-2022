@@ -1,0 +1,46 @@
+name: Build and Push Rust Docs to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+    - name: Build Docs
+      run: |
+        cargo doc
+        cp -r target/doc _site
+    - name: Build Blog
+      env:
+        PATH_PREFIX: /advent-of-code-2022
+      run: |
+        cd pubs
+        npm ci
+        npm run build
+        cp -r pubs/_site/* _site
+
+    - name: Upload artefact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        path: _site
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
+        id: deployment

@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@import "settings/settings";
+
+$foundation-palette: (
+  primary: #92C663,
+  secondary: #767676,
+  success: #92C663,
+  warning: #FAC366,
+  alert: #FF5959,
+  info: #457D9A,
+);
+
+@include add-foundation-colors;
+
+$body-font-family: 'Source Code Pro', Helvetica, Roboto, Arial, sans-serif;
+$body-background: $black;
+$body-font-color: $white;
+$header-font-family: $body-font-family;
+$header-color: $primary-color;
+$anchor-color: $primary-color;
+$anchor-color-hover: darken($primary-color, 10%);
+$code-color: $light-gray;
+$code-background: lighten($black, 15%);
+$code-border: 0;
+$code-block-margin-bottom: 0;
+$header-styles: (
+  small: (
+    'h1': ('font-size': 24),
+    'h2': ('font-size': 20),
+    'h3': ('font-size': 19),
+    'h4': ('font-size': 18),
+    'h5': ('font-size': 17),
+    'h6': ('font-size': 16),
+  ),
+  medium: (
+    'h1': ('font-size': 36),
+    'h2': ('font-size': 30),
+    'h3': ('font-size': 24),
+    'h4': ('font-size': 20),
+    'h5': ('font-size': 18),
+    'h6': ('font-size': 16),
+  ),
+);

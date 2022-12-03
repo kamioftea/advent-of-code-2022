@@ -6,6 +6,7 @@ use std::time::Instant;
 
 extern crate core;
 
+extern crate itertools;
 #[macro_use]
 extern crate text_io;
 

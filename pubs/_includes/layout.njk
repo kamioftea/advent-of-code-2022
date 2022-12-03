@@ -1,0 +1,25 @@
+<!doctype html>
+<!--suppress HtmlUnknownTarget -->
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="{{ '/assets/styles/root.css' | url}}">
+	<link rel="stylesheet" href="{{ '/assets/styles/a11y-dark.css' | url}}">
+	<link rel="alternate icon" type="image/png" href="{{ "/favicon-16x16.png" | url }}">
+	<link rel="alternate icon" type="image/png" href="{{ "/favicon-32x32.png" | url }}">
+	<link rel="icon" type="image/svg+xml" href="{{ "/favicon.svg" | url }}">
+	<title>{{ title }}</title>
+</head>
+<body>
+	<header class="cover-image"
+	        style="background-image: url('{{ '/assets/images/cover-image.png' | url }}')">
+		<div class="title-wrapper">
+		<h1>{{ header }}</h1>
+		</div>
+	</header>
+	<main>
+	  {{ content | safe }}
+	</main>
+</body>
+</html>
