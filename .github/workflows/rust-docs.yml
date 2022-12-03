@@ -24,8 +24,6 @@ jobs:
         cd pubs
         npm ci
         npm run build
-        cp -r pubs/_site/* _site
-
     - name: Upload artefact
       uses: actions/upload-pages-artifact@v1
       with:
