@@ -2,8 +2,6 @@ const fs = require('fs/promises');
 const path = require('node:path');
 
 function injectWriteUpUrl(day, posts) {
-    console.log(day, posts, posts[day])
-
     return posts[day] ? {'Write Up': posts[day]} : {};
 }
 async function buildDay(file, day, posts) {
