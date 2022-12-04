@@ -54,9 +54,7 @@ fn pair_has_redundant_elf(((elf1_start, elf1_end), (elf2_start, elf2_end)): Pair
 }
 
 fn pair_overlaps(((elf1_start, elf1_end), (elf2_start, elf2_end)): Pair) -> bool {
-    (elf1_start <= elf2_end && elf1_end >= elf2_start) ||
-        (elf1_start >= elf2_end && elf1_end <= elf2_start)
-
+    elf1_start <= elf2_end && elf1_end >= elf2_start
 }
 
 fn count_pairs_matching(pairs: &Vec<Pair>, predicate: fn(Pair) -> bool) -> usize {
