@@ -34,15 +34,15 @@
 					<a href="{{ solutions[day - 2].links['Write Up'] | url}}"
 					   class="prev-link"
 					>
-						&lt; {{ solutions[day - 2].title }}
+						&lt; Day {{ day - 1 }}: {{ solutions[day - 2].title }}
 					</a>
 				{% endif %}
-				<a href="{{ '/' | url }}" class="home-link">Jeff's Advent of Code 2022</a>
+
 				{% if solutions[day] %}
 					<a href="{{ solutions[day].links['Write Up'] | url }}"
 					   class="next-link"
 					>
-						{{ solutions[day].title }} &gt;
+						Day {{ day + 1 }}: {{ solutions[day].title }} &gt;
 					</a>
 				{% endif %}
 				<div class="other-links">
@@ -54,6 +54,7 @@
 							{% endif %}
 						{% endfor %}
 					</ul>
+					<p>or go to this year's <a href="{{ '/' | url }}">solution list</a></p>
 				</div>
 			</nav>
 		{% endif %}

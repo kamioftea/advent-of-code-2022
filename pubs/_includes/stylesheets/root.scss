@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'settings';
 @import 'foundation';
 
@@ -114,7 +116,7 @@ pre.hljs {
 .solutions-list {
   display: grid;
 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(rem-calc(360px), calc(100vw - 2 * $global-margin)), 1fr));
   grid-gap: $global-margin;
   margin-bottom: $global-margin;
 
@@ -134,6 +136,10 @@ pre.hljs {
       display: grid;
       grid-template-columns: 1fr 1fr;
 
+      @include breakpoint(rem-calc(360px) down) {
+        grid-template-columns: 1fr;
+      }
+
       a:before {
         content: '[';
         color: $light-gray;
@@ -148,34 +154,44 @@ pre.hljs {
 }
 
 .related-content {
-  border-top: thin $dark-gray solid;
+  border-top: thin darken($primary-color, 40%) solid;
   padding-top: $global-padding;
 
   display: grid;
-  @each $size, $grid-margin-gutter in $grid-margin-gutters {
-    @include breakpoint($size) {
-      grid-gap: $grid-margin-gutter;
-    }
-  }
-  grid-template: "prev home next"
-                 "other other other" / 1fr auto 1fr;
+  grid-gap: $global-margin;
+
+  grid-template:
+    "prev next"
+    "other other"
+    / 1fr 1fr;
 
   .prev-link {
     justify-self: left;
     grid-area: prev;
   }
 
-  .home-link {
-    justify-self: center;
-    grid-area: home;
-  }
-
   .next-link {
     justify-self: right;
+    text-align: right;
     grid-area: next;
   }
 
   .other-links {
     grid-area: other;
+  }
+
+  @include breakpoint(rem-calc(520px) down) {
+    grid-template:
+      "prev"
+      "next"
+      "other"
+      / 1fr;
+
+    grid-gap: math.div($global-margin, 2);
+
+    .next-link {
+      justify-self: left;
+      text-align: left;
+    }
   }
 }
