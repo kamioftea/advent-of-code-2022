@@ -23,7 +23,7 @@
 
 // Basic components
 //@include foundation-badge;
-//@include foundation-breadcrumbs;
+@include foundation-breadcrumbs;
 @include foundation-callout;
 @include foundation-card;
 //@include foundation-dropdown;
@@ -73,12 +73,19 @@ body {
 }
 
 main {
-  width: min(775px, 100%);
+  display: block;
+  width: min(rem-calc(775px), calc(100vw - 2 * $global-padding));
   justify-self: center;
 }
 
 pre.hljs {
   margin-bottom: 1rem;
+}
+
+@include breakpoint(small down) {
+  pre > code {
+    font-size: $small-font-size;
+  }
 }
 
 .cover-image {
@@ -98,10 +105,9 @@ pre.hljs {
   }
 
   h1 {
-    padding: 0;
-    margin: 0;
-    width: min(775px, 100%);
+    width: min(rem-calc(775px), calc(100vw - 2 * $global-padding));
     justify-self: center;
+    margin: auto;
   }
 }
 
@@ -110,6 +116,7 @@ pre.hljs {
 
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   grid-gap: $global-margin;
+  margin-bottom: $global-margin;
 
   .solution {
     display: flex;
@@ -122,5 +129,53 @@ pre.hljs {
     p {
       margin-bottom: 0;
     }
+
+    .solution-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      a:before {
+        content: '[';
+        color: $light-gray;
+      }
+
+      a:after {
+        content: ']';
+        color: $light-gray;
+      }
+    }
+  }
+}
+
+.related-content {
+  border-top: thin $dark-gray solid;
+  padding-top: $global-padding;
+
+  display: grid;
+  @each $size, $grid-margin-gutter in $grid-margin-gutters {
+    @include breakpoint($size) {
+      grid-gap: $grid-margin-gutter;
+    }
+  }
+  grid-template: "prev home next"
+                 "other other other" / 1fr auto 1fr;
+
+  .prev-link {
+    justify-self: left;
+    grid-area: prev;
+  }
+
+  .home-link {
+    justify-self: center;
+    grid-area: home;
+  }
+
+  .next-link {
+    justify-self: right;
+    grid-area: next;
+  }
+
+  .other-links {
+    grid-area: other;
   }
 }

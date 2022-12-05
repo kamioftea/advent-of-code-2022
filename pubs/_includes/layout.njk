@@ -19,7 +19,44 @@
 		</div>
 	</header>
 	<main>
-	  {{ content | safe }}
+		{% if day %}
+			<nav aria-label="You are here:" role="navigation">
+				<ul class="breadcrumbs">
+					<li><a href="{{ '/' | url }}">Jeff's Advent of Code 2022</a></li>
+					<li><span class="show-for-sr">Current: </span>Day {{ day }}</li>
+				</ul>
+			</nav>
+		{% endif %}
+	    {{ content | safe }}
+		{% if day %}
+			<nav aria-label="Related content" class="related-content">
+				{% if solutions[day - 2] %}
+					<a href="{{ solutions[day - 2].links['Write Up'] }}"
+					   class="prev-link"
+					>
+						&lt; {{ solutions[day - 2].title }}
+					</a>
+				{% endif %}
+				<a href="{{ '/' | url }}" class="home-link">Jeff's Advent of Code 2022</a>
+				{% if solutions[day] %}
+					<a href="{{ solutions[day].links['Write Up'] }}"
+					   class="next-link"
+					>
+						{{ solutions[day].title }} &gt;
+					</a>
+				{% endif %}
+				<div class="other-links">
+					<p>Related content:</p>
+					<ul>
+						{% for label, url in solutions[day - 1].links %}
+							{% if label != 'Write Up' %}
+								<li><a href="{{ url }}">{{ label }}</a></li>
+							{% endif %}
+						{% endfor %}
+					</ul>
+				</div>
+			</nav>
+		{% endif %}
 	</main>
 </body>
 </html>
