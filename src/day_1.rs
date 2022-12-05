@@ -21,7 +21,7 @@ pub fn run() {
     let (first, second, third) = find_top_three_calorie_totals(&elf_calorie_totals);
 
     println!(
-        "The most calories carried is: {}",
+        "The most calories carried by one elf is: {}",
         first
     );
 

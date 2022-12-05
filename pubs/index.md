@@ -15,12 +15,12 @@ from both of these, and publish them to this site on GitHub Pages.
 <div class="solutions-list">
 {% for solution in solutions %}
   <div class="solution">
-    <p>{{solution.title}}</p>
-    <p>
-      {%- for label, url in solution.links -%}
-        [<a href="{{ url }}">{{ label }}</a>]
+    <p class="solution-title">{{solution.title}}</p>
+    <div class="solution-links">
+      {%- for label, href in solution.links -%}
+        <a href="{{ href | url }}" class="solution-link">{{ label }}</a>
       {%- endfor -%}
-    </p>
+    </div>
   </div>
 {% endfor %}
 </div>
