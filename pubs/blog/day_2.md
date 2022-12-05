@@ -47,7 +47,7 @@ fn parse_strategy(strategy: &String) -> Tournament {
 }
 
 fn parse_line(line: &str) -> Round {
-    let (part_1, part_2) = line.split_at(1);
+    let (part_1, part_2) = line.split_once(' ').unwrap();
     (
         parse_move(part_1).unwrap(),
         parse_move(part_2).unwrap()
@@ -56,9 +56,9 @@ fn parse_line(line: &str) -> Round {
 
 fn parse_move(chr: &str) -> Option<Move> {
     match chr {
-        "A" | " X" => Some(Rock),
-        "B" | " Y" => Some(Paper),
-        "C" | " Z" => Some(Scissors),
+        "A" | "X" => Some(Rock),
+        "B" | "Y" => Some(Paper),
+        "C" | "Z" => Some(Scissors),
         _ => None
     }
 }
@@ -209,9 +209,9 @@ enum Outcome {
 
 fn parse_outcome(chr: &str) -> Option<Outcome> {
     match chr {
-        " X" => Some(Loss),
-        " Y" => Some(Draw),
-        " Z" => Some(Win),
+        "X" => Some(Loss),
+        "Y" => Some(Draw),
+        "Z" => Some(Win),
         _ => None
     }
 }
@@ -257,7 +257,7 @@ tests and puzzle runner can be updated.
 
 ```rust
 fn parse_outcome_line(line: &str) -> Round {
-    let (part_1, part_2) = line.split_at(1);
+    let (part_1, part_2) = line.split_once(' ').unwrap();
     resolve_outcome(
         parse_move(part_1).unwrap(),
         parse_outcome(part_2).unwrap(),

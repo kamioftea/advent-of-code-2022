@@ -48,9 +48,9 @@
 				<div class="other-links">
 					<p>Related content:</p>
 					<ul>
-						{% for label, url in solutions[day - 1].links %}
+						{% for label, href in solutions[day - 1].links %}
 							{% if label != 'Write Up' %}
-								<li><a href="{{ url }}">{{ label }}</a></li>
+								<li><a href="{{ href | url }}">{{ label }}</a></li>
 							{% endif %}
 						{% endfor %}
 					</ul>

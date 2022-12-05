@@ -14,7 +14,7 @@ async function buildDay(file, day, posts) {
     const links = {
         Puzzle: puzzleURL,
         ...(injectWriteUpUrl(day, posts)),
-        Documentation: `./advent_of_code_2022/day_${day}/index.html`,
+        Documentation: `/advent_of_code_2022/day_${day}/index.html`,
         Source: `https://github.com/kamioftea/advent-of-code-2022/blob/main/src/day_${day}.rs`
     }
 
