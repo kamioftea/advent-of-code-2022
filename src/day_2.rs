@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 2 - _Rock Paper Scissors_](https://adventofcode.com/2021/day/2)
+//! This is my solution for [Advent of Code - Day 2 - _Rock Paper Scissors_](https://adventofcode.com/2022/day/2)
 //!
 //!
 
