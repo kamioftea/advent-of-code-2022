@@ -31,7 +31,7 @@
 		{% if day %}
 			<nav aria-label="Related content" class="related-content">
 				{% if solutions[day - 2] %}
-					<a href="{{ solutions[day - 2].links['Write Up'] }}"
+					<a href="{{ solutions[day - 2].links['Write Up'] | url}}"
 					   class="prev-link"
 					>
 						&lt; {{ solutions[day - 2].title }}
@@ -39,7 +39,7 @@
 				{% endif %}
 				<a href="{{ '/' | url }}" class="home-link">Jeff's Advent of Code 2022</a>
 				{% if solutions[day] %}
-					<a href="{{ solutions[day].links['Write Up'] }}"
+					<a href="{{ solutions[day].links['Write Up'] | url }}"
 					   class="next-link"
 					>
 						{{ solutions[day].title }} &gt;
