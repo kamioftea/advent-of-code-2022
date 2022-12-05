@@ -29,18 +29,18 @@ type Tournament = Vec<Round>;
 /// - It is expected this will be called by [`super::main()`] when the user elects to run day 2.
 pub fn run() {
     let contents = fs::read_to_string("res/day-2-input").expect("Failed to read file");
-    let tournament = parse_strategy(&contents, parse_moves_line);
+    let part_1_tournament = parse_strategy(&contents, parse_moves_line);
 
     println!(
-        "Following the guide assuming moves, your score would be: {}",
-        score_tournament(&tournament)
+        "Following the guide assuming moves, my score would be: {}",
+        score_tournament(&part_1_tournament)
     );
 
-    let tournament2 = parse_strategy(&contents, parse_outcome_line);
+    let part_2_tournament = parse_strategy(&contents, parse_outcome_line);
 
     println!(
-        "Following the guide assuming outcomes, your score would be: {}",
-        score_tournament(&tournament2)
+        "Following the guide assuming outcomes, my score would be: {}",
+        score_tournament(&part_2_tournament)
     );
 }
 
@@ -85,13 +85,13 @@ fn parse_outcome(chr: &str) -> Option<Outcome> {
 }
 
 fn resolve_outcome(their_move: Move, outcome: Outcome) -> Round {
-    let your_move = match outcome {
+    let my_move = match outcome {
         Loss => loss_for(their_move),
         Draw => draw_for(their_move),
         Win => win_for(their_move)
     };
 
-    (their_move, your_move)
+    (their_move, my_move)
 }
 
 fn score_round(round: &Round) -> u32 {
@@ -100,8 +100,8 @@ fn score_round(round: &Round) -> u32 {
 
 fn score_result(round: &Round) -> u32 {
     match round {
-        &(their, your) if win_for(their) == your => 6,
-        &(their, your) if draw_for(their) == your => 3,
+        &(their_move, my_move) if win_for(their_move) == my_move => 6,
+        &(their_move, my_move) if draw_for(their_move) == my_move => 3,
         (_, _) => 0
     }
 }
@@ -117,6 +117,7 @@ fn win_for(mv: Move) -> Move {
 fn draw_for(mv: Move) -> Move {
     mv
 }
+
 fn loss_for(mv: Move) -> Move {
     match mv {
         Rock => Scissors,
@@ -125,8 +126,8 @@ fn loss_for(mv: Move) -> Move {
     }
 }
 
-fn score_move((_, your_move): &Round) -> u32 {
-    match your_move {
+fn score_move((_, my_move): &Round) -> u32 {
+    match my_move {
         Rock => 1,
         Paper => 2,
         Scissors => 3

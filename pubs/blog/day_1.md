@@ -139,7 +139,7 @@ pub fn run() {
         find_most_calories()
     );
 }
-// The most calories carried by one elf is: *****
+// The most calories carried by one elf is: 72240
 ```
 
 ## Part 2 - Find some backup elves
@@ -219,8 +219,9 @@ pub fn run() {
       find_top_three_total(&elf_calorie_totals)
    );
 }
-// The most calories carried by one elf is: *****
-// The total calories carried by the top three elves is: ******
+
+// The most calories carried is: 72240
+// The total calories carried by the top three elves is: 210957
 ```
 
 ## Optimisation and other refactorings
