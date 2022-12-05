@@ -1,12 +1,12 @@
-//! This is my solution for [Advent of Code - Day 3 - _Calorie Counting_](https://adventofcode.com/2022/day/1)
+//! This is my solution for [Advent of Code - Day 3 - _Rucksack Reorganization_](https://adventofcode.com/2022/day/3)
 //!
-//! The task is to sum all the calories carried per elf on our expedition and find those that are carrying the most.
+//!
 
 use std::collections::BTreeSet;
 use std::fs;
 
-
-type Rucksack = (BTreeSet<char>, BTreeSet<char>);
+type Compartment = BTreeSet<char>;
+type Rucksack = (Compartment, Compartment);
 
 /// The entry point for running the solutions with the 'real' puzzle input.
 ///
@@ -38,7 +38,7 @@ fn parse_rucksack(line: &str) -> Rucksack {
     (parse_compartment(a), parse_compartment(b))
 }
 
-fn parse_compartment(line_half: &str) -> BTreeSet<char> {
+fn parse_compartment(line_half: &str) -> Compartment {
     line_half.chars().collect()
 }
 
@@ -48,8 +48,8 @@ fn find_item_to_rearrange((a, b): &Rucksack) -> &char {
 
 fn map_char_to_priority(c: &char) -> u32 {
     match c {
-        'a'..='z' => 31 & *c as u32,
-        'A'..='Z' => (31 & *c as u32) + 26,
+        'a'..='z' => 0b11111 & *c as u32,
+        'A'..='Z' => (0b11111 & *c as u32) + 26,
         _ => unreachable!()
     }
 }
@@ -81,8 +81,7 @@ fn get_rucksack_items((a, b): &Rucksack) -> BTreeSet<char> {
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeSet;
-    use crate::day_3::{find_item_to_rearrange, map_char_to_priority, parse_input, parse_rucksack, sum_group_badge_priorities, sum_mismatched_items};
+    use crate::day_3::{Compartment, find_item_to_rearrange, map_char_to_priority, parse_input, parse_rucksack, sum_group_badge_priorities, sum_mismatched_items};
 
     fn get_sample_data() -> String {
         return "vJrwpWtwJgWrhcsFMMfFFhFp
@@ -102,8 +101,8 @@ CrZsJsPPZsGzwwsLwLmpwMDw".to_string();
         assert_eq!(
             parse_rucksack("ttgJtRGJQctTZtZT"),
             (
-                vec!['t', 'g', 'J', 'R', 'G'].into_iter().collect::<BTreeSet<char>>(),
-                vec!['Q', 'c', 't', 'T', 'Z'].into_iter().collect::<BTreeSet<char>>()
+                vec!['t', 'g', 'J', 'R', 'G'].into_iter().collect::<Compartment>(),
+                vec!['Q', 'c', 't', 'T', 'Z'].into_iter().collect::<Compartment>()
             )
         );
     }
