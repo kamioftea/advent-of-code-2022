@@ -139,7 +139,7 @@ pub fn run() {
         find_most_calories()
     );
 }
-// The most calories carried by one elf is: *****
+// The most calories carried by one elf is: 72240
 ```
 
 ## Part 2 - Find some backup elves
@@ -219,8 +219,9 @@ pub fn run() {
       find_top_three_total(&elf_calorie_totals)
    );
 }
-// The most calories carried by one elf is: *****
-// The total calories carried by the top three elves is: ******
+
+// The most calories carried is: 72240
+// The total calories carried by the top three elves is: 210957
 ```
 
 ## Optimisation and other refactorings
@@ -231,7 +232,7 @@ There are a couple of inefficient things I'm doing that are not necessary given 
    (aliased `Vec<u32>`s) is not needed and will be taking quite a bit of time to allocate.
 2. Sorting the full list of elves when we only need the top three.
 
-So I'll first create a new parsing function that just builds the totals per elf directly. I'm also starting to get back
+So I'll first create a new parsing function that builds the totals per elf directly. I'm also starting to get back
 into the Rust mindset more. Rather than folding I'll use a couple of mutable local variables for the expedition and the
 running total for the current elf. The compiler can detect race conditions and other perils of mutable state, 
 so it is safer to use it than other languages I'm used to.
@@ -302,7 +303,10 @@ fn find_top_three_calorie_totals(elf_calorie_totals: &Vec<u32>) -> (u32, u32, u3
    elf_calorie_totals.iter().fold((0, 0, 0), bubble_calorie_total_into_top_three)
 }
 
-fn bubble_calorie_total_into_top_three(top_3: (u32, u32, u32), &elf: &u32) -> (u32, u32, u32) {
+fn bubble_calorie_total_into_top_three(
+   top_3: (u32, u32, u32), 
+   &elf: &u32
+) -> (u32, u32, u32) {
     match top_3 {
         (a, b, _) if a < elf => (elf, a, b),
         (a, b, _) if b < elf => (a, elf, b),
@@ -313,11 +317,15 @@ fn bubble_calorie_total_into_top_three(top_3: (u32, u32, u32), &elf: &u32) -> (u
 // ...
 #[test]
 fn can_find_top_three_calories() {
-   assert_eq!(find_top_three_calorie_totals(&sample_elf_calorie_totals()), (24000, 11000, 10000))
+   assert_eq!(
+      find_top_three_calorie_totals(&sample_elf_calorie_totals()), 
+      (24000, 11000, 10000)
+   )
 }
 // ...
 pub fn run() {
-   let contents = fs::read_to_string("res/day-1-input").expect("Failed to read file");
+   let contents = fs::read_to_string("res/day-1-input")
+       .expect("Failed to read file");
    let elf_calorie_totals = parse_input_to_calorie_totals(&contents);
    let (first, second, third) = find_top_three_calorie_totals(&elf_calorie_totals);
 
@@ -340,5 +348,5 @@ pub fn run() {
 
 Which is twice again faster, for an overall 10x speed up.
 
-I've done a bit more tidying removing dead code. You can see the [resulting solution code for day 1 in the 
-documentation](../../src/advent_of_code_2022/day_1.rs.html#1-106).
+I've done a bit more tidying removing dead code, simplifying the naming e.g. `parse_input_to_calorie_totals` back to 
+`parse_input` now there are no longer two versions to differentiate. 

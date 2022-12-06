@@ -1,9 +1,10 @@
-//! This is my solution for [Advent of Code - Day 4 - _Camp Cleanup_](
-//! https://adventofcode.com/2022/day/4)
+//! This is my solution for [Advent of Code - Day 4 - _Camp Cleanup_](https://adventofcode.com/2022/day/4)
 //!
-//!
+//! Today is comparing the ranges of the base camp pairs of elves have to clean to check for redundancy.
 
+/// Represents a length of beach an elf is assigned to clean
 type Range = (u32, u32);
+/// The assignments for a pair of elves
 type Pair = (Range, Range);
 
 use std::fs;
@@ -27,10 +28,12 @@ pub fn run() {
     );
 }
 
+/// Parse the string puzzle inut into a list of elf pairs
 fn parse_input(input: &String) -> Vec<Pair> {
     input.lines().map(parse_line).collect()
 }
 
+/// Parse a lne of the input as a single pair of elves
 fn parse_line(line: &str) -> Pair {
     let parts: Vec<&str> = line.split(',').collect();
     (
@@ -39,6 +42,7 @@ fn parse_line(line: &str) -> Pair {
     )
 }
 
+/// Parse the bounds of the range assigned to one elf
 fn parse_range(spec: &str) -> Range {
     let limits: Vec<u32> =
         spec.split('-')
@@ -48,15 +52,18 @@ fn parse_range(spec: &str) -> Range {
     (limits[0], limits[1])
 }
 
+/// Predicate for counting pairs that wholly overlao
 fn pair_has_redundant_elf(((elf1_start, elf1_end), (elf2_start, elf2_end)): Pair) -> bool {
     (elf1_start <= elf2_start && elf1_end >= elf2_end) ||
         (elf1_start >= elf2_start && elf1_end <= elf2_end)
 }
 
+/// Predicate for counting pairs that wholly or partially overlap
 fn pair_overlaps(((elf1_start, elf1_end), (elf2_start, elf2_end)): Pair) -> bool {
     elf1_start <= elf2_end && elf1_end >= elf2_start
 }
 
+/// Given a list of elf pairs, count those that match the given predicate
 fn count_pairs_matching(pairs: &Vec<Pair>, predicate: fn(Pair) -> bool) -> usize {
     pairs.iter().filter(|&&pair| predicate(pair)).count()
 }
