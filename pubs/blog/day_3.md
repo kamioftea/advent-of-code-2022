@@ -13,7 +13,7 @@ Today's task is to help the elves sort out some backpack packing mishaps, that m
 of two sets of characters. The input is a list of rucksacks' contents. Each type of item has a single letter ID, and 
 the contents are shown as a string of those IDs.
 
-## Part 1: Mismatched items
+## Part 1: Intersecting compartments
 
 Each rucksack has two compartments, each having the same number of items, and all from the left compartment are listed 
 before the right. So for the sample input, it splits like so:
@@ -108,11 +108,9 @@ just bitwise & the character's integer representaion with `0b11111`. The puzzle 
 
 ```rust
 fn map_char_to_priority(c: &char) -> u32 {
-    match c {
-        'a'..='z' => 0b11111 & *c as u32,
-        'A'..='Z' => (0b11111 & *c as u32) + 26,
-        _ => unreachable!()
-    }
+    let position = 0b11111 & *c as u32;
+
+    if c.is_uppercase() { position + 26 } else { position }
 }
 
 fn sum_mismatched_items(bags: &Vec<Rucksack>) -> u32 {
@@ -162,3 +160,159 @@ fn can_sum_mismatched_items_priorities() {
     )
 }
 ```
+
+These parts together can now give me the part one solution:
+
+```rust
+pub fn run() {
+    let contents = 
+        fs::read_to_string("res/day-3-input").expect("Failed to read file");
+    let bags = parse_input(&contents);
+
+    println!(
+        "The sum of the mismatched items' priorities is: {}",
+        sum_mismatched_items(&bags)
+    );
+}
+// The sum of the mismatched items' priorities is: 7727
+```
+
+## Part 2: Intersecting backpacks
+
+It also turns out that each group of three elves share an item type they use as an ID badge for their group. These 
+were packed without this year's stickers, so need to be identified so this can be fixed. 
+
+This is again intersecting sets of characters. With the types we currently have the steps are:
+
+1. Group the elves into sets of three.
+2. Union the two compartments of each bag in the group to get the full set of items in the bag. 
+3. Get the intersection of all three bags, which by the puzzle constraints is again guaranteed to be a single character.
+4. Sum the priorities using the same algorithm as before.
+
+I ran into a bunch of borrow checker issues here, Rust's sets don't implement copy which makes them hard to wrap in 
+other iterators, and I'm very much out of practice with the idiomatic ways to do this. I was able to implement 
+the steps
+above, but it's pretty messy code, so I'm looking to refactor this once I have a working solution.
+
+```rust
+fn sum_group_badge_priorities(bags: &Vec<Rucksack>) -> u32 {
+    let mut sum = 0;
+    let mut iter = bags.into_iter();
+    while let Some(base) = iter.next() {
+        let mut items: BTreeSet<char> = get_rucksack_items(&base);
+        
+        items = items.intersection(&get_rucksack_items(iter.next().unwrap()))
+                     .into_iter().map(|&c| c)
+                     .collect();
+                     
+        items = items.intersection(&get_rucksack_items(iter.next().unwrap()))
+                     .into_iter()
+                     .map(|&c| c).collect();
+
+        let c = items.iter().next().unwrap();
+        sum = sum + map_char_to_priority(c)
+    }
+    sum
+}
+
+fn get_rucksack_items((a, b): &Rucksack) -> BTreeSet<char> {
+    a.union(b).into_iter().map(|&c| c).collect()
+}
+// ...
+#[test]
+fn can_sum_badge_priorities() {
+    assert_eq!(
+        sum_group_badge_priorities(&parse_input(&get_sample_data())),
+        70
+    )
+}
+// ...
+pub fn run() {
+    let contents = 
+        fs::read_to_string("res/day-3-input").expect("Failed to read file");
+    let bags = parse_input(&contents);
+
+    println!(
+        "The sum of the mismatched items' priorities is: {}",
+        sum_mismatched_items(&bags)
+    );
+
+    println!(
+        "The sum of the group badge items' priorities is: {}",
+        sum_group_badge_priorities(&bags)
+    )
+}
+// The sum of the mismatched items' priorities is: 7727
+// The sum of the group badge items' priorities is: 2609
+```
+
+## Changing the model
+
+Having seen both parts of the puzzle, it's clear that the model chosen for part 1 is not the best fit for part 2. 
+Further using Sets as the main representation of the rucksack that is passed around is awkward, and the benefits of 
+being able to re-use sets that were costly to build isn't really realised as each set is only really used once. It 
+might be better to pass around the strings, and just make the sets we need on the fly. The core operation then becomes
+intersecting two strings to a string with all the characters in both.
+
+```rust
+fn intersect_strings(a: &String, b: &String) -> String {
+    let set: BTreeSet<char> = BTreeSet::from_iter(a.chars());
+
+    b.chars().filter(|c| set.contains(c)).collect()
+}
+
+// ...
+fn can_intersect_strings() {
+    assert_eq!(
+        intersect_strings(&"abcd".to_string(), &"defg".to_string()), 
+        "d".to_string()
+    );
+    assert_eq!(
+        intersect_strings(&"abcd".to_string(), &"cdef".to_string()), 
+        "cd".to_string()
+    );
+    assert_eq!(
+        intersect_strings(&"cafH".to_string(), &"wHcl".to_string()), 
+        "Hc".to_string()
+    );
+    assert_eq!(
+        intersect_strings(&"cafH".to_string(), &"wHclH".to_string()),
+        "HcH".to_string()
+    );
+}
+```
+
+This is taking some shortcuts allowed by the puzzle constraints:
+
+1. The strings are always going to be emitted in the order of the second string.
+2. Repeated characters in the second string will show up multiple times if they're part of the intersection.
+
+In both cases this is mitigated by the puzzle always reducing the sets down to a single character (possibly repeated) 
+and I can just take the first one.
+
+The replacements for parts 1 and 2 can now be built through chained iterators.
+
+```rust
+fn sum_mismatched_items(rucksacks: &Vec<String>) -> u32 {
+    rucksacks.iter()
+        .map(|line| line.split_at(line.len() / 2))
+        .map(|(a, b)| intersect_strings(&a.to_string(), &b.to_string()))
+        .map(|str| map_char_to_priority(&str.chars().next().unwrap()))
+        .sum()
+}
+
+fn sum_group_badge_priorities(rucksacks: &Vec<String>) -> u32 {
+    rucksacks.chunks(3)
+        .map(|chunk| {
+            let intermediate = intersect_strings(&chunk[0], &chunk[1]);
+            intersect_strings(&intermediate, &chunk[2])
+        })
+        .map(|str| map_char_to_priority(&str.chars().next().unwrap()))
+        .sum()
+}
+```
+
+They pass the previous tests, and produce the same puzzle outputs, but it was much easier to keep the compilter happier,
+and I think it's clearer what is going on. I've cleaned up the moddule by removing the methods, types, and tests no 
+longer needed.
+
