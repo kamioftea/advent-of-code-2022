@@ -104,7 +104,7 @@ Each item type ID has a priority, based on its position in the alphabet:
 There's a neat trick here I picked up from [a talk on Unicode by Dylan Beattie](https://youtu.be/gd5uJ7Nlvvo), which 
 is that the ASCII, and therefore Unicode for the roman alphabet's letters are 5 binary digits representing 1 - 26, 
 prefixed with `10` for uppercase, and `11` for lowercase. So to map the letter to its position in the alphabet, I can 
-just bitwise & the character's integer representaion with `0b11111`. The puzzle examples can be used to make some tests.
+bitwise & the character's integer representaion with `0b11111`. The puzzle examples can be used to make some tests.
 
 ```rust
 fn map_char_to_priority(c: &char) -> u32 {

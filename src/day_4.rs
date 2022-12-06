@@ -1,5 +1,4 @@
-//! This is my solution for [Advent of Code - Day 4 - _Camp Cleanup_](
-//! https://adventofcode.com/2022/day/4)
+//! This is my solution for [Advent of Code - Day 4 - _Camp Cleanup_](https://adventofcode.com/2022/day/4)
 //!
 //!
 
