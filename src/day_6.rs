@@ -5,7 +5,6 @@
 
 use std::collections::BTreeSet;
 use std::fs;
-use itertools::Itertools;
 
 /// The entry point for running the solutions with the 'real' puzzle input.
 ///
@@ -14,38 +13,48 @@ use itertools::Itertools;
 pub fn run() {
     let _contents = fs::read_to_string("res/day-6-input").expect("Failed to read file");
 
-    let start_of_packet = find_start_of_packet(&_contents);
+    let start_of_packet = find_non_repeating_string_of_length(&_contents, 4);
+    println!("The start of packet is detected after {} characters", start_of_packet);
+
+    let start_of_packet = find_non_repeating_string_of_length(&_contents, 14);
     println!("The start of packet is detected after {} characters", start_of_packet);
 }
 
-fn find_start_of_packet(datastream: &String) -> usize {
-    let (i, _) = datastream.chars().tuple_windows().enumerate().find(
-        |(_, (a, b, c, d))| is_unique(a,b,c,d)
+fn find_non_repeating_string_of_length(datastream: &String, window_size: usize) -> usize {
+    let chars: Vec<char> = datastream.chars().collect();
+    let (i, _) = chars.windows(window_size).enumerate().find(
+        |(_, window)| is_unique(window)
     ).unwrap();
 
-    i + 4
+    i + window_size
 }
 
-fn is_unique(a: &char, b: &char, c:&char, d:&char) -> bool {
+fn is_unique(window: &[char]) -> bool {
     let mut set = BTreeSet::new();
-    set.insert(a);
-    set.insert(b);
-    set.insert(c);
-    set.insert(d);
+    window.iter().for_each(|c| {set.insert(c);});
 
-    set.len() == 4
+    set.len() == window.len()
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day_6::find_start_of_packet;
+    use crate::day_6::find_non_repeating_string_of_length;
 
     #[test]
-    fn can_parse() {
-        assert_eq!(find_start_of_packet(&"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string()), 7);
-        assert_eq!(find_start_of_packet(&"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string()), 5);
-        assert_eq!(find_start_of_packet(&"nppdvjthqldpwncqszvftbrmjlhg".to_string()), 6);
-        assert_eq!(find_start_of_packet(&"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string()), 10);
-        assert_eq!(find_start_of_packet(&"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string()), 11);
+    fn can_find_start_of_packet() {
+        assert_eq!(find_non_repeating_string_of_length(&"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 4), 7);
+        assert_eq!(find_non_repeating_string_of_length(&"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 4), 5);
+        assert_eq!(find_non_repeating_string_of_length(&"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 4), 6);
+        assert_eq!(find_non_repeating_string_of_length(&"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 4), 10);
+        assert_eq!(find_non_repeating_string_of_length(&"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 4), 11);
+    }
+
+    #[test]
+    fn can_find_start_of_message() {
+        assert_eq!(find_non_repeating_string_of_length(&"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 14), 19);
+        assert_eq!(find_non_repeating_string_of_length(&"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 14), 23);
+        assert_eq!(find_non_repeating_string_of_length(&"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 14), 23);
+        assert_eq!(find_non_repeating_string_of_length(&"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 14), 29);
+        assert_eq!(find_non_repeating_string_of_length(&"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 14), 26);
     }
 }
