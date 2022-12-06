@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 @import 'settings';
 @import 'foundation';
 
@@ -23,7 +25,7 @@
 
 // Basic components
 //@include foundation-badge;
-//@include foundation-breadcrumbs;
+@include foundation-breadcrumbs;
 @include foundation-callout;
 @include foundation-card;
 //@include foundation-dropdown;
@@ -73,12 +75,19 @@ body {
 }
 
 main {
-  width: min(775px, 100%);
+  display: block;
+  width: min(rem-calc(775px), calc(100vw - 2 * $global-padding));
   justify-self: center;
 }
 
 pre.hljs {
   margin-bottom: 1rem;
+}
+
+@include breakpoint(small down) {
+  pre > code {
+    font-size: $small-font-size;
+  }
 }
 
 .cover-image {
@@ -98,18 +107,18 @@ pre.hljs {
   }
 
   h1 {
-    padding: 0;
-    margin: 0;
-    width: min(775px, 100%);
+    width: min(rem-calc(775px), calc(100vw - 2 * $global-padding));
     justify-self: center;
+    margin: auto;
   }
 }
 
 .solutions-list {
   display: grid;
 
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(rem-calc(360px), calc(100vw - 2 * $global-margin)), 1fr));
   grid-gap: $global-margin;
+  margin-bottom: $global-margin;
 
   .solution {
     display: flex;
@@ -121,6 +130,68 @@ pre.hljs {
 
     p {
       margin-bottom: 0;
+    }
+
+    .solution-links {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      @include breakpoint(rem-calc(360px) down) {
+        grid-template-columns: 1fr;
+      }
+
+      a:before {
+        content: '[';
+        color: $light-gray;
+      }
+
+      a:after {
+        content: ']';
+        color: $light-gray;
+      }
+    }
+  }
+}
+
+.related-content {
+  border-top: thin darken($primary-color, 40%) solid;
+  padding-top: $global-padding;
+
+  display: grid;
+  grid-gap: $global-margin;
+
+  grid-template:
+    "prev next"
+    "other other"
+    / 1fr 1fr;
+
+  .prev-link {
+    justify-self: left;
+    grid-area: prev;
+  }
+
+  .next-link {
+    justify-self: right;
+    text-align: right;
+    grid-area: next;
+  }
+
+  .other-links {
+    grid-area: other;
+  }
+
+  @include breakpoint(rem-calc(520px) down) {
+    grid-template:
+      "prev"
+      "next"
+      "other"
+      / 1fr;
+
+    grid-gap: math.div($global-margin, 2);
+
+    .next-link {
+      justify-self: left;
+      text-align: left;
     }
   }
 }
