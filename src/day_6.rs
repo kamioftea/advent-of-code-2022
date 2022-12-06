@@ -3,8 +3,48 @@
 //!
 //!
 
-use std::collections::BTreeSet;
+use std::collections::{HashMap};
 use std::fs;
+use itertools::Itertools;
+
+struct Counts {
+    counts: HashMap<char, usize>,
+}
+
+impl Counts {
+    fn new(init: &str) -> Self {
+        Self {
+            counts: init.chars().counts_by(|c| c)
+        }
+    }
+
+    fn add_and_remove(&mut self, to_add: &char, to_remove: &char) {
+        if to_add == to_remove {
+            return;
+        }
+
+        self.add(to_add);
+        self.remove(to_remove);
+    }
+
+    fn add(&mut self, to_add: &char) {
+        let new_to_add_count = self.counts.get(to_add).unwrap_or(&0) + 1;
+        self.counts.insert(*to_add, new_to_add_count);
+    }
+
+    fn remove(&mut self, to_remove: &char) {
+        let new_to_remove_count = self.counts.get(to_remove).unwrap() - 1;
+        if new_to_remove_count == 0 {
+            self.counts.remove(to_remove);
+        } else {
+            self.counts.insert(*to_remove, new_to_remove_count);
+        }
+    }
+
+    fn len(&self) -> usize {
+        self.counts.len()
+    }
+}
 
 /// The entry point for running the solutions with the 'real' puzzle input.
 ///
@@ -21,19 +61,22 @@ pub fn run() {
 }
 
 fn find_non_repeating_string_of_length(datastream: &String, window_size: usize) -> usize {
-    let chars: Vec<char> = datastream.chars().collect();
-    let (i, _) = chars.windows(window_size).enumerate().find(
-        |(_, window)| is_unique(window)
-    ).unwrap();
+    let (init, rest) = datastream.split_at(window_size);
+    let mut counts = Counts::new(init);
 
-    i + window_size
-}
+    for (i, (to_add, to_remove))
+    in rest.chars()
+           .zip(datastream.chars())
+           .enumerate()
+    {
+        counts.add_and_remove(&to_add, &to_remove);
 
-fn is_unique(window: &[char]) -> bool {
-    let mut set = BTreeSet::new();
-    window.iter().for_each(|c| {set.insert(c);});
+        if counts.len() == window_size {
+            return i + window_size + 1;
+        }
+    }
 
-    set.len() == window.len()
+    unreachable!()
 }
 
 #[cfg(test)]
@@ -42,19 +85,49 @@ mod tests {
 
     #[test]
     fn can_find_start_of_packet() {
-        assert_eq!(find_non_repeating_string_of_length(&"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 4), 7);
-        assert_eq!(find_non_repeating_string_of_length(&"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 4), 5);
-        assert_eq!(find_non_repeating_string_of_length(&"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 4), 6);
-        assert_eq!(find_non_repeating_string_of_length(&"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 4), 10);
-        assert_eq!(find_non_repeating_string_of_length(&"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 4), 11);
+        assert_eq!(find_non_repeating_string_of_length(
+            &"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 4),
+                   7
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 4),
+                   5
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 4),
+                   6
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 4),
+                   10
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 4),
+                   11
+        );
     }
 
     #[test]
     fn can_find_start_of_message() {
-        assert_eq!(find_non_repeating_string_of_length(&"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 14), 19);
-        assert_eq!(find_non_repeating_string_of_length(&"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 14), 23);
-        assert_eq!(find_non_repeating_string_of_length(&"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 14), 23);
-        assert_eq!(find_non_repeating_string_of_length(&"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 14), 29);
-        assert_eq!(find_non_repeating_string_of_length(&"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 14), 26);
+        assert_eq!(find_non_repeating_string_of_length(
+            &"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 14),
+                   19
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 14),
+                   23
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 14),
+                   23
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 14),
+                   29
+        );
+        assert_eq!(find_non_repeating_string_of_length(
+            &"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 14),
+                   26
+        );
     }
 }
