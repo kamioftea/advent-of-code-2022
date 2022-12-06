@@ -12,10 +12,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
     - uses: actions/setup-node@v3
+
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
     - name: Build Docs
       run: |
         cargo doc
+
     - name: Build Blog
       env:
         PATH_PREFIX: /advent-of-code-2022
@@ -23,6 +36,7 @@ jobs:
         cd pubs
         npm ci
         npm run build
+
     - name: Upload artefact
       uses: actions/upload-pages-artifact@v1
       with:
