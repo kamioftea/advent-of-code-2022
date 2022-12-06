@@ -7,7 +7,7 @@ a string as the result of each part.
 
 This year I've chosen to use [Rust](https://www.rust-lang.org/), and I've used the built-in Rust `cargo doc` tool to 
 build the [documentation for the code](./advent_of_code_2022/). In parallel, I've used 11ty to 
-build a static site for write-ups of how I've tackled each section. I've then used GitHub Actions to publish the outputs 
+build a static site for write-ups of how I've tackled each section. I've then used GitHub Actions to publish the outputs
 from both of these, and publish them to this site on GitHub Pages.
 
 ## My Solutions
