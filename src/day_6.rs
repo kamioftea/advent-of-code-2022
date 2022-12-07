@@ -1,5 +1,4 @@
-//! This is my solution for [Advent of Code - Day 6 - _Title_](
-//! https://adventofcode.com/2022/day/6)
+//! This is my solution for [Advent of Code - Day 6 - _Tuning Trouble_](https://adventofcode.com/2022/day/6)
 //!
 //!
 
@@ -7,18 +6,23 @@ use std::collections::{HashMap};
 use std::fs;
 use itertools::Itertools;
 
+/// Represents a window of characters over a data stream by their counts
 struct Counts {
     counts: HashMap<char, usize>,
 }
 
 impl Counts {
+    /// Create a Counts instance for the first window  in the stream
     fn new(init: &str) -> Self {
         Self {
             counts: init.chars().counts_by(|c| c)
         }
     }
 
+    /// Advance the window by one character by adding the next character in the stream and removing the one that
+    /// falls out.
     fn add_and_remove(&mut self, to_add: &char, to_remove: &char) {
+        // If the characters are the same this is a no-op
         if to_add == to_remove {
             return;
         }
@@ -27,11 +31,13 @@ impl Counts {
         self.remove(to_remove);
     }
 
+    /// Increment the count for `to_add` - adding it to the map if new
     fn add(&mut self, to_add: &char) {
         let new_to_add_count = self.counts.get(to_add).unwrap_or(&0) + 1;
         self.counts.insert(*to_add, new_to_add_count);
     }
 
+    /// Decrement the count for `to_remove` - remove from the map if the count is now 0
     fn remove(&mut self, to_remove: &char) {
         let new_to_remove_count = self.counts.get(to_remove).unwrap() - 1;
         if new_to_remove_count == 0 {
@@ -41,6 +47,7 @@ impl Counts {
         }
     }
 
+    /// The number of unique characters in the map is the same as its length
     fn len(&self) -> usize {
         self.counts.len()
     }
@@ -56,17 +63,18 @@ pub fn run() {
     let start_of_packet = find_non_repeating_string_of_length(&_contents, 4);
     println!("The start of packet is detected after {} characters", start_of_packet);
 
-    let start_of_packet = find_non_repeating_string_of_length(&_contents, 14);
-    println!("The start of packet is detected after {} characters", start_of_packet);
+    let start_of_message = find_non_repeating_string_of_length(&_contents, 14);
+    println!("The start of packet is detected after {} characters", start_of_message);
 }
 
-fn find_non_repeating_string_of_length(datastream: &String, window_size: usize) -> usize {
-    let (init, rest) = datastream.split_at(window_size);
+/// Find the first substring of unique consecutive characters with length `window_size`
+fn find_non_repeating_string_of_length(data_stream: &String, window_size: usize) -> usize {
+    let (init, rest) = data_stream.split_at(window_size);
     let mut counts = Counts::new(init);
 
     for (i, (to_add, to_remove))
     in rest.chars()
-           .zip(datastream.chars())
+           .zip(data_stream.chars())
            .enumerate()
     {
         counts.add_and_remove(&to_add, &to_remove);
@@ -85,49 +93,37 @@ mod tests {
 
     #[test]
     fn can_find_start_of_packet() {
-        assert_eq!(find_non_repeating_string_of_length(
-            &"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 4),
-                   7
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 4),
-                   5
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 4),
-                   6
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 4),
-                   10
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 4),
-                   11
-        );
+        let examples = vec![
+            ("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 7),
+            ("bvwbjplbgvbhsrlpgdmjqwftvncz", 5),
+            ("nppdvjthqldpwncqszvftbrmjlhg", 6),
+            ("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 10),
+            ("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 11),
+        ];
+
+        for (data_stream, expected) in examples {
+            assert_eq!(
+                find_non_repeating_string_of_length(&data_stream.to_string(), 4),
+                expected
+            )
+        }
     }
 
     #[test]
     fn can_find_start_of_message() {
-        assert_eq!(find_non_repeating_string_of_length(
-            &"mjqjpqmgbljsphdztnvjfqwrcgsmlb".to_string(), 14),
-                   19
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"bvwbjplbgvbhsrlpgdmjqwftvncz".to_string(), 14),
-                   23
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"nppdvjthqldpwncqszvftbrmjlhg".to_string(), 14),
-                   23
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg".to_string(), 14),
-                   29
-        );
-        assert_eq!(find_non_repeating_string_of_length(
-            &"zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw".to_string(), 14),
-                   26
-        );
+        let examples = vec![
+            ("mjqjpqmgbljsphdztnvjfqwrcgsmlb", 19),
+            ("bvwbjplbgvbhsrlpgdmjqwftvncz", 23),
+            ("nppdvjthqldpwncqszvftbrmjlhg", 23),
+            ("nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg", 29),
+            ("zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw", 26),
+        ];
+
+        for (data_stream, expected) in examples {
+            assert_eq!(
+                find_non_repeating_string_of_length(&data_stream.to_string(), 14),
+                expected
+            )
+        }
     }
 }
