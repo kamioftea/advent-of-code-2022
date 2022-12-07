@@ -59,13 +59,13 @@ pub fn run() {
     println!("The start of packet is detected after {} characters", start_of_packet);
 }
 
-fn find_non_repeating_string_of_length(datastream: &String, window_size: usize) -> usize {
-    let (init, rest) = datastream.split_at(window_size);
+fn find_non_repeating_string_of_length(data_stream: &String, window_size: usize) -> usize {
+    let (init, rest) = data_stream.split_at(window_size);
     let mut counts = Counts::new(init);
 
     for (i, (to_add, to_remove))
     in rest.chars()
-           .zip(datastream.chars())
+           .zip(data_stream.chars())
            .enumerate()
     {
         counts.add_and_remove(&to_add, &to_remove);
