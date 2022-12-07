@@ -9,7 +9,7 @@ module.exports = function(eleventyConfig) {
 
     // IntelliJ doesn't like frontmatter before <!doctype html> in root layout
     // So add the layout defaults here
-    eleventyConfig.addGlobalData('title', 'Advent of Code 2021 | Jeff Horton')
+    eleventyConfig.addGlobalData('title', 'Advent of Code 2022 | Jeff Horton')
     eleventyConfig.addGlobalData('layout', 'layout.njk')
 
     eleventyConfig.addPassthroughCopy('assets')

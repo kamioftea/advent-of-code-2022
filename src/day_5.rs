@@ -6,14 +6,25 @@ use std::collections::VecDeque;
 use std::fs;
 use itertools::Itertools;
 
+/// Specifies one move of a stack of crates: `(number_of_crates, source_stack, target_stack)`
+type Move = (usize, usize, usize);
+
+/// Represents the current state of the set of stacks being moved.
 #[derive(Eq, PartialEq, Debug, Clone)]
-struct CargoStacks {
+struct SupplyStacks {
     stacks: Vec<VecDeque<char>>
 }
 
-type Move = (usize, usize, usize);
-
-impl From<&str> for CargoStacks {
+impl From<&str> for SupplyStacks {
+    /// Parses a diagram of crates into the internal representation.
+    ///
+    /// Example input:
+    /// ```text
+    ///     [D]
+    /// [N] [C]
+    /// [Z] [M] [P]
+    ///  1   2   3
+    /// ```
     fn from(input: &str) -> Self {
         let mut stacks: Vec<VecDeque<char>> = Vec::new();
         let mut lines = input.lines().rev();
@@ -25,6 +36,7 @@ impl From<&str> for CargoStacks {
 
         for line in lines {
             for (i, chunk) in line.chars().chunks(4).into_iter().enumerate() {
+                // Chunk is either `[#] ` ore `    `, the last in each line will be missing the final space
                 let character: char = chunk.dropping(1).next().unwrap();
                 if character.is_alphabetic() {
                     stacks[i].push_front(character)
@@ -32,11 +44,12 @@ impl From<&str> for CargoStacks {
             }
         }
 
-        CargoStacks{ stacks }
+        SupplyStacks { stacks }
     }
 }
 
-impl CargoStacks {
+impl SupplyStacks {
+    /// Apply a single move of crates - either one by one, or all at once
     fn do_move(&mut self, (count, from, to): Move, all_at_once: bool) {
         let mut temp = Vec::new();
         for _ in 0..count {
@@ -52,12 +65,14 @@ impl CargoStacks {
         }
     }
 
+    /// Apply a list of moves delegating each move to [`SupplyStacks::do_move`]
     fn do_moves(&mut self, mvs: &Vec<Move>, all_at_once: bool) {
         for &mv in mvs {
             self.do_move(mv, all_at_once)
         }
     }
 
+    /// Combine the characters at the top of each stack into a string used as the puzzle output.
     fn get_top_crates(&self) -> String {
         self.stacks.to_owned().into_iter().map(|stack| stack[0]).join("")
     }
@@ -85,25 +100,31 @@ pub fn run() {
     );
 }
 
-fn parse_input(input: &String) -> (CargoStacks, Vec<Move>) {
+/// SPlit the input into the two sections and independently parse each one
+fn parse_input(input: &String) -> (SupplyStacks, Vec<Move>) {
     let (stack_spec, moves_spec) = input.split_once("\n\n").unwrap();
 
-    (CargoStacks::from(stack_spec), parse_moves(moves_spec))
+    (SupplyStacks::from(stack_spec), parse_moves(moves_spec))
 }
 
+/// Map the list of moves to the internal representation
 fn parse_moves(input: &str) -> Vec<Move> {
     input.lines().map(parse_move).collect()
 }
 
+/// Parse a single move line in the format `move 2 from 2 to 1`
 fn parse_move(line: &str) -> Move {
-    let parts: Vec<usize> = line.split_whitespace().flat_map(|str| str.parse::<usize>()).collect();
+    let parts: Vec<usize> =
+        line.split_whitespace()
+            .flat_map(|str| str.parse::<usize>())
+            .collect();
 
     (parts[0], parts[1], parts[2])
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::day_5::{CargoStacks, Move, parse_input};
+    use crate::day_5::{SupplyStacks, Move, parse_input};
 
     #[test]
     fn can_parse() {
@@ -132,8 +153,8 @@ move 1 from 1 to 2".to_string();
         ]
     }
 
-    fn sample_stacks() -> CargoStacks {
-        CargoStacks {
+    fn sample_stacks() -> SupplyStacks {
+        SupplyStacks {
             stacks: vec![
                 vec!['N', 'Z'].into_iter().collect(),
                 vec!['D', 'C', 'M'].into_iter().collect(),
@@ -160,8 +181,8 @@ move 1 from 1 to 2".to_string();
         );
     }
 
-    fn sample_stacks_after_moving_one_at_a_time() -> CargoStacks {
-        CargoStacks {
+    fn sample_stacks_after_moving_one_at_a_time() -> SupplyStacks {
+        SupplyStacks {
             stacks: vec![
                 vec!['C'].into_iter().collect(),
                 vec!['M'].into_iter().collect(),
@@ -170,8 +191,8 @@ move 1 from 1 to 2".to_string();
         }
     }
 
-    fn sample_stacks_after_moving_in_bulk() -> CargoStacks {
-        CargoStacks {
+    fn sample_stacks_after_moving_in_bulk() -> SupplyStacks {
+        SupplyStacks {
             stacks: vec![
                 vec!['M'].into_iter().collect(),
                 vec!['C'].into_iter().collect(),
