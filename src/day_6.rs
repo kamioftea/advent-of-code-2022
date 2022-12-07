@@ -1,5 +1,4 @@
-//! This is my solution for [Advent of Code - Day 6 - _Title_](
-//! https://adventofcode.com/2022/day/6)
+//! This is my solution for [Advent of Code - Day 6 - _Tuning Trouble_](https://adventofcode.com/2022/day/6)
 //!
 //!
 
