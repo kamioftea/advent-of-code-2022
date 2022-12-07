@@ -77,9 +77,8 @@ fn can_parse() {
 # Part 1 - Wholly redundant
 
 First task, I have to count the pairs where one elf is wholly redundant, e.g. lines 4 and 5 in the sample. The 
-hard work was all done when parsing the input, I now just need to filter to only the pairs where one elf starts on or
-before the other, and finishes on or after the other.  here, and as those
-are passing I can 
+hard work was all done when parsing the input, I now need to filter to only the pairs where one elf starts on or
+before the other, and finishes on or after the other.
 
 ```rust
 fn count_redundant_pairs(pairs: &Vec<Pair>) -> usize {
@@ -94,7 +93,7 @@ fn pair_has_redundant_elf(
 }
 ```
 
-The sample data can also be used as a test cases:
+The sample data can also be used as a test cases.
 
 ```rust
 #[test]
@@ -131,7 +130,7 @@ fn can_count_pairs() {
 }
 ```
 
-With those passing I can apply `count_redundant_pairs` to the puzzle input;
+With those passing I can apply `count_redundant_pairs` to the puzzle input.
 
 ```rust
 pub fn run() {
@@ -148,9 +147,9 @@ pub fn run() {
 
 ## Part 2 - Some overlap
 
-Part two is very similar to part 1, but has a more leinient filter. I need to count the pairs that have any overlap.
+Part two is very similar to part 1, but has a more lenient filter. I need to count the pairs that have any overlap.
 
-First a quick refactor to extract the filter to a parameter of the count method
+First a quick refactor to extract the filter to a parameter of the count method.
 
 ```rust
 fn count_pairs_matching(pairs: &Vec<Pair>, predicate: fn(Pair) -> bool) -> usize {

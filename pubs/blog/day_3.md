@@ -251,7 +251,7 @@ pub fn run() {
 Having seen both parts of the puzzle, it's clear that the model chosen for part 1 is not the best fit for part 2. 
 Further using Sets as the main representation of the rucksack that is passed around is awkward, and the benefits of 
 being able to re-use sets that were costly to build isn't really realised as each set is only really used once. It 
-might be better to pass around the strings, and just make the sets we need on the fly. The core operation then becomes
+might be better to pass around the strings, and make the sets we need on the fly. The core operation then becomes
 intersecting two strings to a string with all the characters in both.
 
 ```rust
@@ -288,7 +288,7 @@ This is taking some shortcuts allowed by the puzzle constraints:
 2. Repeated characters in the second string will show up multiple times if they're part of the intersection.
 
 In both cases this is mitigated by the puzzle always reducing the sets down to a single character (possibly repeated) 
-and I can just take the first one.
+and I can take the first one.
 
 The replacements for parts 1 and 2 can now be built through chained iterators.
 
