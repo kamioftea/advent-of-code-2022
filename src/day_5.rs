@@ -114,7 +114,10 @@ fn parse_moves(input: &str) -> Vec<Move> {
 
 /// Parse a single move line in the format `move 2 from 2 to 1`
 fn parse_move(line: &str) -> Move {
-    let parts: Vec<usize> = line.split_whitespace().flat_map(|str| str.parse::<usize>()).collect();
+    let parts: Vec<usize> =
+        line.split_whitespace()
+            .flat_map(|str| str.parse::<usize>())
+            .collect();
 
     (parts[0], parts[1], parts[2])
 }

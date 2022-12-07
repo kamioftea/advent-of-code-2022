@@ -53,7 +53,8 @@ impl From<&str> for SupplyStacks {
 
         for line in lines {
             for (i, chunk) in line.chars().chunks(4).into_iter().enumerate() {
-                // Chunk is either `[A] ` ore `    `, the last in each line will be missing the final space
+                // Chunk is either `[A] ` ore `    `, the last in each line 
+                // will be missing the final space
                 let character: char = chunk.dropping(1).next().unwrap();
                 if character.is_alphabetic() {
                     stacks[i].push_front(character)
@@ -83,7 +84,10 @@ fn parse_moves(input: &str) -> Vec<Move> {
 }
 
 fn parse_move(line: &str) -> Move {
-    let parts: Vec<usize> = line.split_whitespace().flat_map(|str| str.parse::<usize>()).collect();
+    let parts: Vec<usize> = 
+        line.split_whitespace()
+            .flat_map(|str| str.parse::<usize>())
+            .collect();
 
     (parts[0], parts[1], parts[2])
 }
@@ -206,11 +210,12 @@ fn can_get_stack_tops() {
 }
 ```
 
-Everything is now in place, and just needs to be applied to the puzzle input
+Everything is now in place, and all that is left is to apply the puzzle input.
 
 ```rust
 pub fn run() {
-    let contents = fs::read_to_string("res/day-5-input").expect("Failed to read file");
+    let contents = 
+        fs::read_to_string("res/day-5-input").expect("Failed to read file");
     let (mut stacks, moves) = parse_input(&contents);
 
     stacks.do_moves(&moves);
@@ -301,7 +306,8 @@ fn can_apply_moves() {
 }
 // ...
 pub fn run() {
-    let contents = fs::read_to_string("res/day-5-input").expect("Failed to read file");
+    let contents = 
+        fs::read_to_string("res/day-5-input").expect("Failed to read file");
     let (mut part_1_stacks, moves) = parse_input(&contents);
     let mut part_2_stacks = part_1_stacks.clone();
 
