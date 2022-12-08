@@ -2,22 +2,23 @@
 
 [Advent of Code Website](https://adventofcode.com/)
 
-Scripts written to solve the 2022 edition of Advent of Code. Code is written in Rust. I'm sticking with Rust this year
+Scripts written to solve the 2022 edition of Advent of Code. I'm sticking with Rust this year
 as I still feel I have a lot to learn.
 
-[`main.rs`](./src/main.rs) - This is the entry point to the
-script, and follows a pattern of asking for a day to run, then deferring to
-`day_X.rs` for each days' solutions. Unit tests for each day written based on the examples given in the puzzle
-descriptions are in a `tests` submodule in that day's file.
+[`main.rs`](./src/main.rs) - This is the entry point to the script, and follows a pattern of asking for a day to run, 
+then deferring to `day_X.rs` for each days' solutions. Unit tests for each day written based on the examples given in 
+the puzzle descriptions are in a `tests` submodule in that day's file.
 
-Alongside the puzzles I'm using GitHub actions / pages to automate publishing the docs.
+Alongside the puzzles I'm using GitHub actions / pages to automate publishing the docs, and I'm using 
+[11ty](https://www.11ty.dev) to build a static site to post walk-throughs of how I developed my solutions.
 
-There is a [GitHub action](./.github/workflows/check-build.yml) that runs on a pull request -> main to check everything is in
-order. This:
+There is a [GitHub action](./.github/workflows/check-build.yml) that runs on a pull request -> main to check everything
+is in order. This:
 
 - Builds the project
 - Runs the tests
 - Builds the docs
+- Builds the static site
 
 To enforce these checks the main branch has been protected, and pull requests to main require the action to complete
 before they can be merged.
@@ -25,15 +26,10 @@ before they can be merged.
 When the pull request is merged into main, a [second GitHub action](./.github/workflows/rust-docs.yml) is triggered.
 This:
 
-- Merges the main branch changes into the `ghpages` branch
-- Builds the docs with `rustdoc`
-- Builds the static landing page with [11ty](https://www.11ty.dev/)
-- Deletes the old `/docs`, and copied the updated version in their place
-- Commits and pushes any changes.
-
-The [GitHub Pages Site](https://kamioftea.github.io/advent-of-code-2022) for the repository is set
-to be published from the `/docs` folder of the `ghpages` branch, so this commit and push triggers a re-deployment of the 
-pages site with the updated content automatically.
+- Builds the docs
+- Builds the static site
+- Bundles them into an artefact suitable for GitHub pages
+- Deploys the bundle to the repositories [GitHub Pages site](https://kamioftea.github.io/advent-of-code-2022).
 
 ## Previous years:
 

@@ -128,8 +128,11 @@ pre.hljs {
     padding: $global-padding;
     margin: 1px;
 
-    p {
-      margin-bottom: 0;
+    .solution-title {
+      font-size: rem-calc(18px);
+      color: $white;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
     }
 
     .solution-links {

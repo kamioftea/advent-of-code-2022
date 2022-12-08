@@ -4,6 +4,7 @@ const path = require('node:path');
 function injectWriteUpUrl(day, posts) {
     return posts[day] ? {'Write Up': posts[day]} : {};
 }
+
 async function buildDay(file, day, posts) {
     const contents = await fs.readFile(file, 'utf-8')
     const line = contents.split(/[\n\r]+/)[0]
@@ -43,5 +44,14 @@ module.exports = function() {
             );
             return [...(await buildSolutionData(posts))].sort((a, b) => a.day - b.day)
         },
+        title: data => data.title || [data.header, 'Advent of Code 2022', 'Jeff Horton'].join(' | '),
+        description: data => {
+            if(data.description) {
+               return data.description
+            }
+            if(data.day && data.header) {
+                return `A walkthrough of my solution for Advent of Code 2022 ${data.header}`
+            }
+        }
     }
 }
