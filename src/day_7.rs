@@ -7,12 +7,14 @@ use std::num::ParseIntError;
 use itertools::Itertools;
 use crate::day_7::Command::{AddDir, AddFile, PopDir, PushDir, RootDir};
 
+/// Represent a file in a filesystem
 #[derive(Eq, PartialEq, Debug, Clone)]
 struct File {
     name: String,
     size: usize,
 }
 
+/// Represent a directory in a file system
 #[derive(Eq, PartialEq, Debug, Clone)]
 struct Directory {
     name: String,
@@ -26,6 +28,7 @@ impl From<&str> for Directory {
     }
 }
 
+/// Represent console output as a command to update the state of a [`FileSystem`] to match
 #[derive(Eq, PartialEq, Debug, Clone)]
 enum Command {
     PushDir(String),
@@ -58,6 +61,7 @@ impl TryFrom<&str> for Command {
     }
 }
 
+/// Represent a file system with it's contents in a tree starting at `root` and the current working directory in `path`
 #[derive(Eq, PartialEq, Debug, Clone)]
 struct FileSystem {
     root: Directory,
@@ -80,18 +84,22 @@ impl From<Vec<Command>> for FileSystem {
 }
 
 impl FileSystem {
+    /// Update the internal state based on a line of console output
     fn apply(&mut self, command: Command) {
         match command {
-            RootDir => {
-                self.path = vec![];
-            }
+            RootDir => { self.path = vec![]; }
             PopDir => { self.path.pop(); }
             PushDir(dir_name) => {
                 let Directory { sub_dirs, .. } = self.current_dir();
-                if let Some(_) = sub_dirs.iter().find(|Directory { name, .. }| name == &dir_name) {
+                let maybe_dir =
+                    sub_dirs.iter()
+                            .find(|Directory { name, .. }| name == &dir_name);
+
+                if let Some(_) = maybe_dir {
                     self.path.push(dir_name)
                 }
             }
+
             AddDir(dir) => {
                 self.current_dir().sub_dirs.push(dir)
             }
@@ -101,16 +109,23 @@ impl FileSystem {
         }
     }
 
+    /// Use the path to walk thr tree to the current working directory and return it as a mutable reference
     fn current_dir(&mut self) -> &mut Directory {
         self.path.iter().fold(
             &mut self.root,
             |dir, dir_name|
-                dir.sub_dirs.iter_mut().find(|Directory { name, .. }| name == dir_name).unwrap(),
+                dir.sub_dirs.iter_mut()
+                   .find(|Directory { name, .. }| name == dir_name)
+                   .unwrap(),
         )
     }
 }
 
 impl Directory {
+    /// Recursively a list of directory sizes in the tree below and including this directory.
+    ///
+    /// Note that inner directories will be included in their own list entry and as part of the total in each of
+    /// their ancestors. The last item in the returned list will be the total size of the directory this was called on.
     fn dir_sizes(&self) -> Vec<usize> {
         let mut sizes = Vec::new();
         let mut size = 0;
@@ -144,14 +159,19 @@ pub fn run() {
     println!("The size of the directory selected for deletion is: {}", find_directory_size_to_delete(&file_system));
 }
 
+/// Turn console lines into structured data representing the change to the file system state indicated by that line
+/// of output.
 fn parse_commands(input: &String) -> Vec<Command> {
     input.lines().flat_map(Command::try_from).collect()
 }
 
+/// Part 1: Sum all the directories whose total contents are 100_000 units or less
 fn get_small_dirs_size_sum(fs: &FileSystem) -> usize {
-    fs.root.dir_sizes().iter().filter(|&&size| size <= 100000 ).sum()
+    fs.root.dir_sizes().iter().filter(|&&size| size <= 100_000).sum()
 }
 
+/// Part 2: Find the smallest directory that needs to be deleted to leave 30M units of space free from a total of 70M
+/// units of space.
 fn find_directory_size_to_delete(fs: &FileSystem) -> usize {
     let sizes = fs.root.dir_sizes();
     let total_used = sizes.last().unwrap_or(&0);
