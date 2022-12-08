@@ -9,7 +9,7 @@ able to convert this into a format I can analyse.
 
 ## Parsing the console output
 
-The example data ahows a file system with a some directories and files in the root, and onc subdirectory and a bunch of
+The example data shows a file system with a some directories and files in the root, and onc subdirectory and a bunch of
 other files deeper in the structure.
 
 ```text
@@ -110,7 +110,7 @@ fn parse_commands(input: &String) -> Vec<Command> {
 }
 ```
 
-Building the test cases for today's puzzle was quite tedious, but having them really helped guide my solution so it was
+Building the test cases for today's puzzle was quite tedious, but having them really helped guide my solution, so it was
 definitely worth it.
 
 ```rust
@@ -176,7 +176,7 @@ state.
 
 I attempted to have the path be a vector of pointers to the directories within the directory tree, but I wasn't work out
 how to prove to the compiler that the directory structure it was pointing to couldn't be deallocated whilst the path 
-pointers still existed, so I ended up referencing them by name and navingating to the right node each time. A bit 
+pointers still existed, so I ended up referencing them by name and navigating to the right node each time. A bit 
 inefficient, but I didn't notice a performance problem, so I'm happy to leave it like this. There's also some error
 handling missing here, but I know the puzzle input will be valid, so it's not a problem in this context.
 
@@ -299,7 +299,7 @@ The first task is to find all the small directories. As there is a tree structur
 recursive function. There is some interesting complexity in that I need to add the directory size to the list of 
 directories I'm building as well as pass the total size of the directory up to the next level so that it can be included
 in its parent's total. Handily when querying a sub_directory for its list of directory sizes, the size of that 
-directory is always going to be last in the list, so that can be used to pass both pieces of neede information in one.
+directory is always going to be last in the list, so that can be used to pass both pieces of needed information in one.
 
 ```rust
 impl Directory {
@@ -366,7 +366,7 @@ pub fn run() {
 // The sum of small directory sizes is: 1886043 
 ```
 
-## Part 2 - Deleting a directoty
+## Part 2 - Deleting a directory
 
 Finally, I now have to solve the original issue. I need to find the smallest possible directory that I can delete to 
 free up the needed space. Having modelled the domain, these final steps nicely fall out of what is already implemented.
