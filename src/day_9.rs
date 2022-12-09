@@ -38,11 +38,13 @@ pub fn run() {
     );
 }
 
+/// Map the input file to the internal representation
 fn parse_input(input: &String) -> Vec<Motion> {
-    input.lines().map(parse_move).collect()
+    input.lines().map(parse_motion).collect()
 }
 
-fn parse_move(line: &str) -> Motion {
+/// Map a line of the input to the internal representation
+fn parse_motion(line: &str) -> Motion {
     let (letter, number) = line.split_once(" ").unwrap();
 
     let direction = match letter {
@@ -58,15 +60,17 @@ fn parse_move(line: &str) -> Motion {
     (direction, distance)
 }
 
+/// Map a specification of a move of the head of the rope to the list of positions it follows
 fn apply_motion((x, y): Position, (direction, distance): Motion) -> Vec<Position> {
     let mut positions = Vec::new();
     for d in 1..=distance {
+        let d_i = isize::try_from(d).unwrap();
         positions.push(
             match direction {
-                UP => (x, y - isize::try_from(d).unwrap()),
-                DOWN => (x, y + isize::try_from(d).unwrap()),
-                LEFT => (x - isize::try_from(d).unwrap(), y),
-                RIGHT => (x + isize::try_from(d).unwrap(), y),
+                UP => (x, y - d_i),
+                DOWN => (x, y + d_i),
+                LEFT => (x - d_i, y),
+                RIGHT => (x + d_i, y),
             }
         )
     }
@@ -74,6 +78,7 @@ fn apply_motion((x, y): Position, (direction, distance): Motion) -> Vec<Position
     positions
 }
 
+/// Give a new head position, move the tail so it is still touching
 fn update_tail((head_x, head_y): Position, (tail_x, tail_y): Position) -> Position {
     if (head_x - tail_x).abs() <= 1 && (head_y - tail_y).abs() <= 1 {
         (tail_x, tail_y)
@@ -85,6 +90,7 @@ fn update_tail((head_x, head_y): Position, (tail_x, tail_y): Position) -> Positi
     }
 }
 
+/// map a list of motions specifications to the list of positions it follows
 fn apply_motions(origin: Position, motions: &Vec<Motion>) -> Vec<Position> {
     let mut positions = Vec::new();
     positions.push(origin);
@@ -98,6 +104,7 @@ fn apply_motions(origin: Position, motions: &Vec<Motion>) -> Vec<Position> {
     positions
 }
 
+// Map the positions the previous section of a rope follows to the positions the next section follows
 fn follow_head(origin: Position, head_positions: Vec<Position>) -> Vec<Position> {
     let mut tail_positions = Vec::new();
     tail_positions.push(origin);
@@ -114,8 +121,9 @@ fn follow_head(origin: Position, head_positions: Vec<Position>) -> Vec<Position>
     tail_positions
 }
 
-fn count_tail_positions(head_motions: &Vec<Motion>, knots: usize) -> usize {
-    (0..knots)
+/// Map the movement specification to the tail movement of an arbitrary length of rope.
+fn count_tail_positions(head_motions: &Vec<Motion>, rope_length: usize) -> usize {
+    (0..rope_length)
         .fold(
             apply_motions((0, 0), head_motions),
             |previous_knot, _| follow_head((0, 0), previous_knot),
