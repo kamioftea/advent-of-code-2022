@@ -100,7 +100,6 @@ impl Grid {
 
     /// Calculate the height from the
     pub fn height(&self) -> usize {
-        println!("{} , {} => {}", self.numbers.len(), self.width, (self.numbers.len() + self.width - 1) / self.width);
         (self.numbers.len() + self.width - 1) / self.width
     }
 
@@ -199,7 +198,7 @@ mod tests {
 
     #[test]
     fn can_calc_height() {
-        println!("{}", Grid::from("11\n22\n33".to_string()).print());
+        println!("{}", Grid::from("1\n2\n3".to_string()).print());
 
         assert_eq!(Grid::from("1\n2\n3\n4".to_string()).height(), 4);
         assert_eq!(Grid::from("12\n34\n56".to_string()).height(), 3);
