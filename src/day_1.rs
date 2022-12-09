@@ -53,7 +53,7 @@ fn parse_input(input: &String) -> Expedition {
     expedition
 }
 
-/// Extract the calorie totals of just the three elves with the most food.
+/// Extract the calorie totals of  the three elves with the most food.
 fn find_top_three_calorie_totals(expedition: &Expedition) -> (CalorieTotal, CalorieTotal, CalorieTotal) {
     expedition.iter().fold((0, 0, 0), bubble_calorie_total_into_top_three)
 }

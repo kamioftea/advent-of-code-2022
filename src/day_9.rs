@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 9 - _Title_](https://adventofcode.com/2022/day/9)
+//! This is my solution for [Advent of Code - Day 9 - _Rope Bridge_](https://adventofcode.com/2022/day/9)
 //!
 //!
 
