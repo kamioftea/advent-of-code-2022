@@ -273,7 +273,10 @@ impl Grid {
 // ...
 #[test]
 fn can_sum_grid() {
-    let grid = Grid::new(3, 3, |x, y| u8::try_from(x).unwrap() + u8::try_from(y).unwrap());
+    let grid = Grid::new(
+      3, 3, 
+      |x, y| u8::try_from(x).unwrap() + u8::try_from(y).unwrap()
+    );
     assert_eq!(grid.sum(), 18)
 }
 ```
@@ -285,7 +288,12 @@ fn find_visible_count(grid: &Grid) -> usize {
     let mut visible = Grid::new(
         grid.width,
         grid.height(),
-        |x, y| u8::from(x == 0 || y == 0 || x == grid.width - 1 || y == grid.height() - 1),
+        |x, y| u8::from(
+          x == 0 
+              || y == 0 
+              || x == grid.width - 1 
+              || y == grid.height() - 1
+        ),
     );
 
     for y in 1..(grid.height() - 1) {
@@ -322,7 +330,8 @@ Now this is passing I can apply the puzzle input.
 
 ```rust
 pub fn run() {
-    let contents = fs::read_to_string("res/day-8-input").expect("Failed to read file");
+    let contents = 
+        fs::read_to_string("res/day-8-input").expect("Failed to read file");
     let grid = Grid::from(contents);
 
     println!(
@@ -346,7 +355,12 @@ it with the other `Options`, as when a taller tree is encountered I need to incr
 that tree, whereas I need to stop on the current count if I walk off the grid.
 
 ```rust
-fn count_visible_with_delta((origin_y, origin_x): (usize, usize), (dy, dx): (isize, isize), origin_height: u8, grid: &Grid) -> usize {
+fn count_visible_with_delta(
+  (origin_y, origin_x): (usize, usize), 
+  (dy, dx): (isize, isize), 
+  origin_height: u8, 
+  grid: &Grid
+) -> usize {
     (1..)
         .map(
             |pos| {
@@ -358,8 +372,13 @@ fn count_visible_with_delta((origin_y, origin_x): (usize, usize), (dy, dx): (isi
         .fold_while(
             0,
             |count, h|
-                if h >= origin_height { Done(count + 1) } else { Continue(count + 1) },
-        ).into_inner()
+                if h >= origin_height {
+                  Done(count + 1) 
+                } else { 
+                  Continue(count + 1) 
+                },
+        )
+        .into_inner()
 }
 ```
 
@@ -414,7 +433,8 @@ fn can_find_max_score() {
 }
 // ...
 pub fn run() {
-    let contents = fs::read_to_string("res/day-8-input").expect("Failed to read file");
+    let contents = 
+        fs::read_to_string("res/day-8-input").expect("Failed to read file");
     let grid = Grid::from(contents);
 
     println!(
