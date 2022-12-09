@@ -1,6 +1,6 @@
 //! This is my solution for [Advent of Code - Day 6 - _Tuning Trouble_](https://adventofcode.com/2022/day/6)
 //!
-//!
+//! Find substrings with a unique set of characters in a much larger string
 
 use std::collections::{HashMap};
 use std::fs;

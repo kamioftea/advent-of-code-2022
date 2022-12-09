@@ -1,6 +1,7 @@
 //! This is my solution for [Advent of Code - Day 5 - _Supply Stacks_](https://adventofcode.com/2022/day/5)
 //!
-//!
+//! Implements parsing a diagram of stacked crates, and simulate moving them towers of hanoi style according to an
+//! instruction list.
 
 use std::collections::VecDeque;
 use std::fs;
