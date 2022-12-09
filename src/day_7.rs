@@ -1,6 +1,6 @@
 //! This is my solution for [Advent of Code - Day 7 - _No Space Left On Device_](https://adventofcode.com/2022/day/7)
 //!
-//!
+//! Parse and recursively walk a directory structure to find the optimal directory to delete
 
 use std::fs;
 use std::num::ParseIntError;

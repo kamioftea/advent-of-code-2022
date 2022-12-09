@@ -11,12 +11,11 @@ pub struct Grid {
 impl From<String> for Grid {
     /// Turn the characters into digits and concatenate, caching the width
     fn from(string: String) -> Self {
-        let mut width: usize = 0;
+        let width: usize = string.lines().next().unwrap_or("").len();
 
         let numbers = string
             .lines()
             .flat_map(|line| {
-                width = line.len();
                 return line.chars().map(|c| {
                     c.to_digit(10)
                      .expect(format!("{} is not a digit", c).as_str()) as u8
@@ -48,8 +47,9 @@ impl<'a> Iterator for GridCoords<'a> {
 }
 
 impl Grid {
+    /// Build a new grid with a mapping function to generate the date for each cell
     pub fn new<F>(width: usize, height: usize, init: F) -> Self
-    where F: Fn(usize, usize) -> u8
+        where F: Fn(usize, usize) -> u8
     {
         let mut numbers = Vec::new();
         for y in 0..height {
@@ -58,7 +58,7 @@ impl Grid {
             }
         }
 
-        Self {width, numbers}
+        Self { width, numbers }
     }
 
     /// Helper to abstract iterating over the whole grid
@@ -85,7 +85,7 @@ impl Grid {
     }
 
     /// Turn (y, x) coordinates into a position in the underlying array
-    pub fn pos_of(&self, y: usize, x: usize) -> Option<usize> {
+    fn pos_of(&self, y: usize, x: usize) -> Option<usize> {
         if x >= self.width {
             return None;
         }
@@ -99,12 +99,15 @@ impl Grid {
         return Some(pos);
     }
 
+    /// Calculate the height from the
     pub fn height(&self) -> usize {
-        self.numbers.len() / self.width
+        println!("{} , {} => {}", self.numbers.len(), self.width, (self.numbers.len() + self.width - 1) / self.width);
+        (self.numbers.len() + self.width - 1) / self.width
     }
 
+    /// Sum the cells in the grid
     pub fn sum(&self) -> usize {
-        self.numbers.iter().map(|&v| usize::from(v) ).sum()
+        self.numbers.iter().map(|&v| usize::from(v)).sum()
     }
 
     /// Used by [`GridCoords::next`] and other iterators over the grid , e.g. [`Grid::iterate_and_flash`] to turn the
@@ -154,6 +157,24 @@ mod tests {
             .to_string()
     }
 
+
+    #[test]
+    fn can_set_and_get() {
+        let mut grid = Grid::from(sample_input());
+
+        assert_eq!(grid.get(0, 0), Some(1));
+        assert_eq!(grid.get(0, 4), Some(5));
+        assert_eq!(grid.get(4, 0), Some(5));
+        assert_eq!(grid.get(4, 4), Some(9));
+        assert_eq!(grid.get(5, 4), None);
+        assert_eq!(grid.get(3, 5), None);
+        assert_eq!(grid.get(17, 29), None);
+
+        grid.set(4, 4, 17);
+
+        assert_eq!(grid.get(4, 4), Some(17));
+    }
+
     #[test]
     fn can_print() {
         let input = sample_input();
@@ -176,6 +197,15 @@ mod tests {
         assert_eq!(grid.set(5, 5, 9), false);
         // unchanged
         assert_eq!(grid.print(), sample_input());
+    }
+
+    #[test]
+    fn can_calc_height() {
+        println!("{}", Grid::from("11\n22\n33".to_string()).print());
+
+        assert_eq!(Grid::from("1\n2\n3\n4".to_string()).height(), 4);
+        assert_eq!(Grid::from("12\n34\n56".to_string()).height(), 3);
+        assert_eq!(Grid::from("123\n34".to_string()).height(), 2);
     }
 
     #[test]
