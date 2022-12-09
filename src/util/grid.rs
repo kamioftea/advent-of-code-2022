@@ -1,5 +1,4 @@
-/// A representation of a 2D grid of u8s. Originally implemented for [`crate::day_9`], another grid was needed for
-/// [`crate::day_11`] and so common methods were extracted to this shared module
+/// A representation of a 2D grid of u8s.
 #[derive(Debug, Eq, PartialEq, Clone)]
 pub struct Grid {
     /// Store the numbers in a 1D list...
@@ -110,8 +109,7 @@ impl Grid {
         self.numbers.iter().map(|&v| usize::from(v)).sum()
     }
 
-    /// Used by [`GridCoords::next`] and other iterators over the grid , e.g. [`Grid::iterate_and_flash`] to turn the
-    /// current iterator position into the x/y co-ordinates and the value in that cell.
+    /// Used by [`GridCoords::next`]
     pub fn get_with_coords(&self, pos: usize) -> Option<((usize, usize), u8)> {
         let x = pos % self.width;
         let y = pos / self.width;

@@ -11,8 +11,8 @@ would like to assess their suitability to host a tree house.
 Grid based puzzles are a staple of advent of code, so I already have an implementation I used multiple times last year.
 I'm going to bring that into this year's code and add the extra methods I need. 
 
-The grid stores its contents in a `Vec<u8>`. So far I've not yet needed to store anything other than `u8`s in the cells, 
-so I'll stick with that for now.  
+The [grid]({{'/advent_of_code_2022/util/grid/struct.Grid.html' | url}}) stores its contents in a `Vec<u8>`. So far I've 
+not yet needed to store anything other than `u8`s in the cells, so I'll stick with that for now.  
 
 ```rust
 #[derive(Debug, Eq, PartialEq, Clone)]
