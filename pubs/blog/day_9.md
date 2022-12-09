@@ -1,6 +1,6 @@
 ---
 day: 9
-type: post
+tags: post
 header: 'Day 9: Rope Bridge'
 ---
 Today I'm modelling simplified rope movement. There is a list of moves one end of the rope will follow, and I'm 
@@ -64,7 +64,7 @@ fn parse_motion(line: &str) -> Motion {
 }
 ```
 
-Testing this just requires me to write out the example data as the internal representation.
+Testing this requires me to write out the example data as the internal representation.
 
 ```rust
 fn sample_motions() -> Vec<Motion> {
@@ -137,8 +137,13 @@ fn update_tail((head_x, head_y): Position, (tail_x, tail_y): Position) -> Positi
         (tail_x, tail_y)
     } else {
         (
-            if tail_x < head_x { tail_x + 1 } else if tail_x > head_x { tail_x - 1 } else { tail_x },
-            if tail_y < head_y { tail_y + 1 } else if tail_y > head_y { tail_y - 1 } else { tail_y },
+            if tail_x < head_x { tail_x + 1 } 
+            else if tail_x > head_x { tail_x - 1 } 
+            else { tail_x },
+            
+            if tail_y < head_y { tail_y + 1 }
+            else if tail_y > head_y { tail_y - 1 } 
+            else { tail_y },
         )
     }
 }
@@ -187,7 +192,7 @@ fn can_follow_head() {
 ```
 
 The details of the implementation mean that the tail stays at the origin for multiple redundant steps, but as the 
-eventual goal is just to count unique positions this isn't an issue. The only remaining step is to reduce the 
+eventual goal is to count unique positions this isn't an issue. The only remaining step is to reduce the 
 path of the tail positions to a list of unique positions, and count it.
 
 ```rust
