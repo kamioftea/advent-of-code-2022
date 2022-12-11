@@ -6,6 +6,7 @@ use std::fs;
 use itertools::Itertools;
 use crate::day_9::Direction::*;
 
+/// Represent the directions a motion can be in
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 enum Direction {
     UP,
@@ -14,6 +15,7 @@ enum Direction {
     RIGHT,
 }
 
+/// An instruction to move the head of the rope in a direction for a distance
 type Motion = (Direction, usize);
 type Position = (isize, isize);
 
