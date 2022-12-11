@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 10 - _Title_](https://adventofcode.com/2022/day/10)
+//! This is my solution for [Advent of Code - Day 10 - _Cathode-Ray Tube_](https://adventofcode.com/2022/day/10)
 //!
 //!
 
