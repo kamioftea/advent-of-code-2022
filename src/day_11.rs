@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 11 - _Title_](https://adventofcode.com/2022/day/11)
+//! This is my solution for [Advent of Code - Day 11 - _Day 11: Monkey in the Middle_](https://adventofcode.com/2022/day/11)
 //!
 //!
 
@@ -7,13 +7,24 @@ use itertools::Itertools;
 use crate::day_11::Operand::Value;
 use crate::day_11::Operation::{Add, Mul};
 
+/// Represent an operand that can either be the old worry value or a fixed number
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 enum Operand {
     Value(isize),
     Old,
 }
 
+impl From<&str> for Operand {
+    fn from(spec: &str) -> Self {
+        match spec {
+            "old" => Operand::Old,
+            i => Value(i.parse().unwrap())
+        }
+    }
+}
+
 impl Operand {
+    /// Given the old worry value for an item, return the operand value
     fn apply(&self, item: isize) -> isize {
         match self {
             &Operand::Old => item,
@@ -22,13 +33,30 @@ impl Operand {
     }
 }
 
+/// Represent an update operation for an item's worry level
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 enum Operation {
     Mul(Operand, Operand),
     Add(Operand, Operand),
 }
 
+impl From<&str> for Operation {
+    fn from(spec: &str) -> Self {
+        let mut parts = spec.split_whitespace();
+        let a = parts.next().unwrap().into();
+        let op = parts.next().unwrap();
+        let b = parts.next().unwrap().into();
+
+        match op {
+            "+" => Add(a, b),
+            "*" => Mul(a, b),
+            _ => unreachable!()
+        }
+    }
+}
+
 impl Operation {
+    /// Return the new worry value for an item, given the old value
     fn apply(&self, item: isize) -> isize {
         match self {
             &Mul(a, b) => a.apply(item) * b.apply(item),
@@ -45,6 +73,7 @@ struct Test {
 }
 
 impl Test {
+    /// Return the index of the monkey to pass the item to given the new worry value and this monkey's divisor
     fn apply(&self, worry: isize) -> usize {
         if worry % self.divisor == 0 {
             self.if_true
@@ -54,6 +83,7 @@ impl Test {
     }
 }
 
+// Represent a predictable monkey throwing items
 #[derive(Eq, PartialEq, Debug, Clone)]
 struct Monkey {
     items: Vec<isize>,
@@ -66,7 +96,7 @@ impl From<&str> for Monkey {
     fn from(spec: &str) -> Self {
         let mut lines = spec.lines();
 
-        // Monkey: <id>
+        // Ignore Monkey: <id>
         lines.next();
 
         //   Starting items: 79, 60, 97
@@ -101,28 +131,7 @@ impl From<&str> for Monkey {
     }
 }
 
-impl From<&str> for Operation {
-    fn from(spec: &str) -> Self {
-        let mut parts = spec.split_whitespace();
-        let a = parse_operand(parts.next().unwrap());
-        let op = parts.next().unwrap();
-        let b = parse_operand(parts.next().unwrap());
-
-        match op {
-            "+" => Add(a, b),
-            "*" => Mul(a, b),
-            _ => unreachable!()
-        }
-    }
-}
-
-fn parse_operand(spec: &str) -> Operand {
-    match spec {
-        "old" => Operand::Old,
-        i => Value(i.parse().unwrap())
-    }
-}
-
+/// Parse a if/else branch of a monkey's decision tree in the format `If <true|false>: throw to monkey <index>`
 fn parse_branch(spec: &str) -> usize {
     spec.split_whitespace()
         .dropping(5).next().unwrap()
@@ -149,10 +158,12 @@ pub fn run() {
     )
 }
 
+/// Parse the puzzle input into `Monkey`s
 fn parse_input(input: &String) -> Vec<Monkey> {
     input.split("\n\n").map_into().collect()
 }
 
+/// Simulate each monkey processing its items in turn, updating the list in-place
 fn simulate_round(monkeys: &mut Vec<Monkey>, worry_divisor: isize, common_denominator: isize) {
     for i in 0..monkeys.len() {
         let mut monkey = monkeys.get_mut(i).unwrap();
@@ -170,6 +181,8 @@ fn simulate_round(monkeys: &mut Vec<Monkey>, worry_divisor: isize, common_denomi
     }
 }
 
+/// Simulate the monkeys for a number of rounds, then multiply the handling counts of the two mist active monkeys to
+/// get their "monkey business score!
 fn get_monkey_business_level(
     mut monkeys: &mut Vec<Monkey>,
     rounds: usize,
