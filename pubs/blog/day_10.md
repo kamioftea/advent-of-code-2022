@@ -42,8 +42,8 @@ addx -5".to_string();
 }
 ```
 
-The values of interest are the signals produced by reading the register once a cycle, and notablly `ADDX` takes two 
-cycles before the update is appied. I can represent this by pushing the current register value the relevant number 
+The values of interest are the signals produced by reading the register once a cycle, and notably `ADDX` takes two 
+cycles before the update is applied. I can represent this by pushing the current register value the relevant number 
 of times for the instruction being parsed. This gives the list of signals needed for the puzzle answers. Again there 
 is a test example here, I add an additional `NOOP` so that the value after the second `ADDX` is emitted once.
 
@@ -74,9 +74,9 @@ fn can_generate_signals() {
 }
 ```
 
-## Sampling the signal
+## Part 1 - Sampling the signal
 
-Part one requires taking the value after 20 cycles, then every 40 cycles after that. That done, sum each of those 
+The task requires taking the value after 20 cycles, then every 40 cycles after that. That done, sum each of those 
 values. Since I have a list of the signals, I can chain `Itertools` extensions to achieve this, test it, and then 
 apply the puzzle input.
 
@@ -116,7 +116,7 @@ pub fn run() {
 // The sum of sampled signal strengths is: 14240
 ```
 
-## Signal to screen
+## Part 2 - Signal to screen
 
 That done, I find out that the register holds the `x` position of the centre of a three pixel "sprite" the height of 
 the screen. It is intended that the screen cycles through each of it's 40 x 6 pixels, and if the sprite overlaps the 
