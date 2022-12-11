@@ -1,11 +1,12 @@
 //! This is my solution for [Advent of Code - Day 10 - _Cathode-Ray Tube_](https://adventofcode.com/2022/day/10)
 //!
-//!
+//! Interpret a set of instructions into pixels on a display
 
 use std::fs;
 use itertools::Itertools;
 use crate::day_10::Instruction::{ADDX, NOOP};
 
+/// Represent the two possible instruction types that the puzzle input can contain
 #[derive(Eq, PartialEq, Debug, Copy, Clone)]
 enum Instruction {
     ADDX(isize),
@@ -17,7 +18,8 @@ enum Instruction {
 /// - The puzzle input is expected to be at `<project_root>/res/day-10-input`
 /// - It is expected this will be called by [`super::main()`] when the user elects to run day 10.
 pub fn run() {
-    let contents = fs::read_to_string("res/day-10-input").expect("Failed to read file");
+    let contents =
+        fs::read_to_string("res/day-10-input").expect("Failed to read file");
 
     let instructions = parse_input(&contents);
 
@@ -32,10 +34,12 @@ pub fn run() {
     );
 }
 
+/// Parse the puzzle input string
 fn parse_input(input: &String) -> Vec<Instruction> {
     input.lines().map(parse_instruction).collect()
 }
 
+/// Parse a line of the input to a signal
 fn parse_instruction(line: &str) -> Instruction {
     if line.starts_with("addx") {
         let (_, value) = line.split_once(" ").unwrap();
@@ -45,6 +49,7 @@ fn parse_instruction(line: &str) -> Instruction {
     }
 }
 
+/// Interpret the instruction list into the signals sent to the display
 fn to_signals(instructions: &Vec<Instruction>) -> Vec<isize> {
     let mut register = 1;
     let mut signals = Vec::new();
@@ -62,6 +67,7 @@ fn to_signals(instructions: &Vec<Instruction>) -> Vec<isize> {
     signals
 }
 
+/// Take specific signals and sum them
 fn sample_and_sum_signal_strength(instructions: &Vec<Instruction>) -> isize {
     to_signals(instructions)
         .iter()
@@ -73,6 +79,8 @@ fn sample_and_sum_signal_strength(instructions: &Vec<Instruction>) -> isize {
         .sum()
 }
 
+/// Interpret the signals as controlling a "sprite" that will cause a pixel to be lit if the sprite overlaps whilst the
+/// pixel is drawn.
 fn draw_pixels(instructions: &Vec<Instruction>) -> String {
     let mut lines = String::new();
 
@@ -80,7 +88,7 @@ fn draw_pixels(instructions: &Vec<Instruction>) -> String {
         let pos = isize::try_from(i % 40).unwrap();
 
         lines.push(
-            if pos.abs_diff(signal) < 2 { '∎' } else { '.' }
+            if pos.abs_diff(signal) <= 1 { '█' } else { '.' }
         );
 
         if pos == 39 {
@@ -124,12 +132,12 @@ addx -5".to_string();
 
     #[test]
     fn can_draw_pixels() {
-        let expected = "∎∎..∎∎..∎∎..∎∎..∎∎..∎∎..∎∎..∎∎..∎∎..∎∎..
-∎∎∎...∎∎∎...∎∎∎...∎∎∎...∎∎∎...∎∎∎...∎∎∎.
-∎∎∎∎....∎∎∎∎....∎∎∎∎....∎∎∎∎....∎∎∎∎....
-∎∎∎∎∎.....∎∎∎∎∎.....∎∎∎∎∎.....∎∎∎∎∎.....
-∎∎∎∎∎∎......∎∎∎∎∎∎......∎∎∎∎∎∎......∎∎∎∎
-∎∎∎∎∎∎∎.......∎∎∎∎∎∎∎.......∎∎∎∎∎∎∎.....\n".to_string();
+        let expected = "██..██..██..██..██..██..██..██..██..██..
+███...███...███...███...███...███...███.
+████....████....████....████....████....
+█████.....█████.....█████.....█████.....
+██████......██████......██████......████
+███████.......███████.......███████.....\n".to_string();
 
         assert_eq!(draw_pixels(&sample_instructions()), expected);
     }
