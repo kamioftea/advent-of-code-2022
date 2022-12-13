@@ -44,7 +44,8 @@ impl PartialOrd for Cell {
 /// - The puzzle input is expected to be at `<project_root>/res/day-12-input`
 /// - It is expected this will be called by [`super::main()`] when the user elects to run day 12.
 pub fn run() {
-    let contents = fs::read_to_string("res/day-12-input").expect("Failed to read file");
+    let contents =
+        fs::read_to_string("res/day-12-input").expect("Failed to read file");
     let (grid, start, goal) = parse_input(&contents);
 
     println!(
@@ -98,7 +99,7 @@ fn find_shortest_path<F, GP, HP>(
     where
         HP: Fn(u8, u8) -> bool,
         GP: Fn(Position, u8) -> bool,
-        F: Fn(Position, usize) -> usize,
+        F: Fn(Position, usize, u8) -> usize,
 {
     let mut heap: BinaryHeap<Cell> = BinaryHeap::new();
     let mut dists: Vec<usize> = (0..grid.numbers.len()).map(|_| usize::MAX).collect();
@@ -106,7 +107,7 @@ fn find_shortest_path<F, GP, HP>(
     dists[grid.pos_of(start).unwrap()] = 0;
     heap.push(Cell {
         dist: 0,
-        cost: cost_function(start, 0),
+        cost: cost_function(start, 0, 0),
         coords: start,
     });
 
@@ -122,13 +123,13 @@ fn find_shortest_path<F, GP, HP>(
         }
 
 
-        for (next_coords, v) in grid.get_orthogonal_surrounds(coords) {
+        for (next_coords, next_height) in grid.get_orthogonal_surrounds(coords) {
             let next_pos = grid.pos_of(next_coords).unwrap();
 
-            if height_difference_predicate(current_height, v) && (dist + 1 < dists[next_pos]) {
+            if height_difference_predicate(current_height, next_height) && (dist + 1 < dists[next_pos]) {
                 heap.push(Cell {
                     dist: dist + 1,
-                    cost: cost_function(next_coords, dist + 1),
+                    cost: cost_function(next_coords, dist + 1, next_height),
                     coords: next_coords,
                 });
                 dists[next_pos] = dist + 1
@@ -148,7 +149,7 @@ fn find_shortest_trail(
         goal,
         |curr_h, next_h| curr_h - 1 <= next_h,
         |_, h| h == 1,
-        |_, d| d,
+        |_, d, h| d + usize::from(h),
     )
 }
 
@@ -162,7 +163,7 @@ fn find_shortest_path_from_start(
         start,
         |curr_h, next_h| curr_h + 1 >= next_h,
         |pos, _| pos == goal,
-        |pos, d| manhatten_distance(pos, goal) + d,
+        |pos, d, h| manhatten_distance(pos, goal) + d + usize::from(h),
     )
 }
 

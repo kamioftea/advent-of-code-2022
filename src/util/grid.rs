@@ -213,9 +213,22 @@ mod tests {
         assert_eq!(grid.get(4, 4), Some(17));
     }
 
-    //noinspection SpellCheckingInspection
     #[test]
     fn can_print() {
+        let input = sample_input();
+
+        let mut grid = Grid::from(input.clone());
+
+        assert_eq!(grid.print(), input);
+
+        grid.set(4, 4, 10);
+
+        assert_eq!(grid.print(), input.replace("9", "#"));
+    }
+
+    //noinspection SpellCheckingInspection
+    #[test]
+    fn can_print_with_custom_output() {
         let input = sample_input();
         let grid = Grid::from(input);
 
@@ -227,19 +240,6 @@ mod tests {
             .to_string();
 
         assert_eq!(grid.print_with(|v| char::from(v + 96).to_string()), expected);
-    }
-
-    #[test]
-    fn can_print_with_custom_outpyr() {
-        let input = sample_input();
-
-        let mut grid = Grid::from(input.clone());
-
-        assert_eq!(grid.print(), input);
-
-        grid.set(4, 4, 10);
-
-        assert_eq!(grid.print(), input.replace("9", "#"));
     }
 
     #[test]

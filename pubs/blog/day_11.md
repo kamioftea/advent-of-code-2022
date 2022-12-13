@@ -252,7 +252,7 @@ Now I need to loop over each monkey's items in turn. The awkwardness here is I c
 the `Monkey`s list at a time, so I can't modify monkeys whilst iterating over the list, nor keep a mutable reference to
 the current monkey whilst passing items the item lists of other monkeys. To work around this I need to:
 
-1. Iterate over the monkey indices, rather than the list and get a mutable reference just while I need it within the 
+1. Iterate over the monkey indices, rather than the list and get a mutable reference only while I need it within the 
    loop.
 2. Store a copy of the item list (it's a short list of integers, so cheap to copy), and the other parts of the monkey 
    needed when iterating over the list.
@@ -350,7 +350,7 @@ pub fn run() {
 
 Now I need to re-run the simulation for 10,000 rounds, also given how long it is taking to get my items back, I no 
 longer feel the same sense of relief when they aren't broken. I suspect the problem here is the worry will outgrow 
-what can be stored in an integer, but I plug in the number just to be sure.
+what can be stored in an integer, but I plug in the number to be sure.
 
 ```text
 attempt to multiply with overflow
@@ -463,4 +463,4 @@ pub fn run() {
 ```
 
 It takes by far the longest of any day so far (~75ms out of ~125ms total run time for all 11 puzzles). I can't think 
-of an easy way to make ite more efficient, so I just take the hit.
+of an easy way to make ite more efficient, so I'll take the hit.
