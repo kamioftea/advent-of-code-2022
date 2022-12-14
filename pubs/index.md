@@ -19,7 +19,9 @@ and publish them to this site on GitHub Pages.
 <div class="solutions-list">
 {% for solution in solutions %}
   <section class="solution" aria-labelledby="{{ solution.title | slugify }}">
-    <h3 class="solution-title" id="{{ solution.title | slugify }}">{{solution.title}}</h3>
+    <h3 class="solution-title" id="{{ solution.title | slugify }}">
+      Day {{ solution.day }}: {{solution.title}}
+    </h3>
     <div class="solution-links">
       {%- for label, href in solution.links -%}
         <a href="{{ href | url }}" class="solution-link">{{ label }}</a>

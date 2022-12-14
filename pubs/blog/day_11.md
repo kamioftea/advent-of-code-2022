@@ -1,7 +1,7 @@
 ---
 day: 11
-type: post,
-header: 'Day 11: Monkey in the Middle'
+tags: post
+header: 'Monkey in the Middle'
 ---
 
 Still swimming upstream I notice some very predictable monkeys have taken some things from my rucksack. 
@@ -463,4 +463,4 @@ pub fn run() {
 ```
 
 It takes by far the longest of any day so far (~75ms out of ~125ms total run time for all 11 puzzles). I can't think 
-of an easy way to make ite more efficient, so I'll take the hit.
+of a way to make it more efficient, so I'll take the hit.

@@ -1,4 +1,4 @@
-//! This is my solution for [Advent of Code - Day 11 - _Day 11: Monkey in the Middle_](https://adventofcode.com/2022/day/11)
+//! This is my solution for [Advent of Code - Day 11 - _Monkey in the Middle_](https://adventofcode.com/2022/day/11)
 //!
 //!
 

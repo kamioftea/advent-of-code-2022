@@ -1,6 +1,6 @@
 ---
 day: 12
-type: post,
+tags: post
 header: 'Day 12: Hill Climbing Algorithm'
 ---
 I now need to get to the high ground so that I can find some signal for my poor comms device. This is a pathfinding 
