@@ -15,6 +15,7 @@ mod day_14;
 mod day_15;
 mod day_16;
 mod day_17;
+mod day_18;
 mod util;
 
 use std::io::{self, Write};
@@ -49,6 +50,7 @@ fn main() {
         Box::new(|| day_15::run()),
         Box::new(|| day_16::run()),
         Box::new(|| day_17::run()),
+        Box::new(|| day_18::run()),
     ];
 
     let start = Instant::now();
