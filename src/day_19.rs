@@ -130,14 +130,13 @@ impl State {
     }
 
     fn build_robot(&self, blueprint: &Blueprint, resource: &Resource) -> Self {
-        let cost= blueprint.cost(resource);
+        let cost = blueprint.cost(resource);
 
         Self {
             resources: self.resources.diff(&cost).merge(&self.robots),
             robots: self.robots.merge(&Counts::one(resource)),
             time: self.time - 1,
         }
-
     }
 }
 
@@ -193,7 +192,7 @@ fn get_max_geodes(blueprint: &Blueprint, time_limit: usize) -> usize {
 
         seen_states.insert(cacheable_state);
 
-        if state.resources.has(&blueprint.cost(&GEODE))  {
+        if state.resources.has(&blueprint.cost(&GEODE)) {
             unseen.push_back(state.build_robot(blueprint, &GEODE));
             continue;
         }
@@ -216,17 +215,17 @@ fn get_max_geodes(blueprint: &Blueprint, time_limit: usize) -> usize {
 
 fn get_quality_level_sum(blueprints: &Vec<Blueprint>, time_limit: usize) -> usize {
     blueprints.into_iter().enumerate()
-        .map(|(i, bp)| (i+1)*get_max_geodes(bp, time_limit))
-        .sum()
+              .map(|(i, bp)| (i + 1) * get_max_geodes(bp, time_limit))
+              .sum()
 }
 
 fn get_max_geode_product(blueprints: &Vec<Blueprint>, time_limit: usize) -> usize {
     blueprints.into_iter()
-        .map(| bp| get_max_geodes(bp, time_limit))
-        .fold(
-            1,
-            |acc, geodes| acc * geodes
-        )
+              .map(|bp| get_max_geodes(bp, time_limit))
+              .fold(
+                  1,
+                  |acc, geodes| acc * geodes,
+              )
 }
 
 #[cfg(test)]
@@ -274,6 +273,6 @@ Blueprint 2: \
 
     #[test]
     fn can_get_geode_product() {
-        assert_eq!(get_max_geode_product(&sample_blueprints(), 32), 62*56)
+        assert_eq!(get_max_geode_product(&sample_blueprints(), 32), 62 * 56)
     }
 }
