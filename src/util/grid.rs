@@ -10,19 +10,13 @@ pub struct Grid {
 impl From<String> for Grid {
     /// Turn the characters into digits and concatenate, caching the width
     fn from(string: String) -> Self {
-        let width: usize = string.lines().next().unwrap_or("").len();
-
-        let numbers = string
-            .lines()
-            .flat_map(|line| {
-                return line.chars().map(|c| {
-                    c.to_digit(10)
-                     .expect(format!("{} is not a digit", c).as_str()) as u8
-                });
-            })
-            .collect();
-
-        Grid { numbers, width }
+        Grid::from_string_with_mapping(
+            &string,
+            |c| {
+                c.to_digit(10)
+                 .expect(format!("{} is not a digit", c).as_str()) as u8
+            },
+        )
     }
 }
 
@@ -60,6 +54,19 @@ impl Grid {
         Self { width, numbers }
     }
 
+    pub fn from_string_with_mapping(input: &String, mapping: fn(char) -> u8) -> Self {
+        let width: usize = input.lines().next().unwrap_or("").len();
+
+        let numbers = input
+            .lines()
+            .flat_map(|line| {
+                return line.chars().map(mapping);
+            })
+            .collect();
+
+        Self { numbers, width }
+    }
+
     /// Helper to abstract iterating over the whole grid
     pub fn iter(&self) -> GridCoords {
         GridCoords { grid: self, pos: 0 }
@@ -67,14 +74,14 @@ impl Grid {
 
     /// Return the value at the given co-ordinates
     pub fn get(&self, y: usize, x: usize) -> Option<u8> {
-        self.pos_of(y, x)
+        self.pos_of((y, x))
             .and_then(|p| self.numbers.get(p))
             .map(|&v| v)
     }
 
     /// Update the value in a given cell
     pub fn set(&mut self, y: usize, x: usize, val: u8) -> bool {
-        match self.pos_of(y, x) {
+        match self.pos_of((y, x)) {
             Some(pos) => {
                 self.numbers[pos] = val;
                 true
@@ -84,7 +91,7 @@ impl Grid {
     }
 
     /// Turn (y, x) coordinates into a position in the underlying array
-    fn pos_of(&self, y: usize, x: usize) -> Option<usize> {
+    pub fn pos_of(&self, (y, x): (usize, usize)) -> Option<usize> {
         if x >= self.width {
             return None;
         }
@@ -116,9 +123,47 @@ impl Grid {
         self.numbers.get(pos).map(|&val| ((y, x), val))
     }
 
+    pub fn get_orthogonal_surrounds(&self, (y, x): (usize, usize)) -> Vec<((usize, usize), u8)> {
+        [(-1, 0), (0, 1), (1, 0), (0, -1)] // N E S W
+            .iter()
+            .flat_map(|&(dy, dx)| self.get_relative(y, x, dy, dx))
+            .collect()
+    }
+
+    pub fn get_relative(
+        &self,
+        y: usize,
+        x: usize,
+        dy: isize,
+        dx: isize,
+    ) -> Option<((usize, usize), u8)> {
+        let y1 = (y as isize) + dy;
+        let x1 = (x as isize) + dx;
+
+        if y1 >= 0 && x1 >= 0 {
+            self.get(y1 as usize, x1 as usize)
+                .map(|val| ((y1 as usize, x1 as usize), val))
+        } else {
+            None
+        }
+    }
+
     /// Dump the grid to stdout - useful for visualising the grid when debugging
     #[allow(dead_code)]
     pub fn print(&self) -> String {
+        self.print_with(
+            |v| if v <= 9 {
+                v.to_string()
+            } else {
+                "#".to_string()
+            }
+        )
+    }
+
+    #[allow(dead_code)]
+    pub fn print_with<F>(&self, cell_renderer: F) -> String
+        where F: Fn(u8) -> String
+    {
         let (_, out) = self
             .iter()
             .fold((0usize, "".to_string()), |(prev_y, out), ((y, _), v)| {
@@ -128,11 +173,7 @@ impl Grid {
                         "{}{}{}",
                         out,
                         if y != prev_y { "\n" } else { "" },
-                        if v <= 9 {
-                            v.to_string()
-                        } else {
-                            "#".to_string()
-                        },
+                        cell_renderer(v),
                     ),
                 )
             });
@@ -185,6 +226,22 @@ mod tests {
         assert_eq!(grid.print(), input.replace("9", "#"));
     }
 
+    //noinspection SpellCheckingInspection
+    #[test]
+    fn can_print_with_custom_output() {
+        let input = sample_input();
+        let grid = Grid::from(input);
+
+        let expected = "abcde\n\
+        bcdef\n\
+        cdefg\n\
+        defgh\n\
+        efghi"
+            .to_string();
+
+        assert_eq!(grid.print_with(|v| char::from(v + 96).to_string()), expected);
+    }
+
     #[test]
     fn set_ignores_out_of_bounds() {
         let mut grid = Grid::from(sample_input());
@@ -198,8 +255,6 @@ mod tests {
 
     #[test]
     fn can_calc_height() {
-        println!("{}", Grid::from("1\n2\n3".to_string()).print());
-
         assert_eq!(Grid::from("1\n2\n3\n4".to_string()).height(), 4);
         assert_eq!(Grid::from("12\n34\n56".to_string()).height(), 3);
         assert_eq!(Grid::from("123\n34".to_string()).height(), 2);
